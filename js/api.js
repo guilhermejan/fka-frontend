@@ -1,6 +1,3 @@
-let products = [];
-let nextId = 1;
-
 // URL do backend em produção
 const API_URL = "https://fka-backend.onrender.com/api";
 
