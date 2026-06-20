@@ -304,3 +304,96 @@ document.addEventListener("click", (e) => {
     e.target.classList.remove("open");
   }
 });
+
+// ===============================
+// CONFIGURAÇÕES — HERO BACKGROUND
+// Cole no final do admin.js
+// ===============================
+ 
+async function loadHeroBgSetting() {
+  try {
+    const url = await getSetting("hero_bg");
+    const box = document.getElementById("hero-bg-preview-box");
+    const btnRemove = document.getElementById("btn-remove-bg");
+    if (!box) return;
+ 
+    if (url && url.trim() !== "") {
+      box.outerHTML = `<img id="hero-bg-preview-box" class="hero-bg-preview" src="${url}" alt="Fundo atual">`;
+      if (btnRemove) btnRemove.style.display = "inline-flex";
+    } else {
+      if (btnRemove) btnRemove.style.display = "none";
+    }
+  } catch(e) {
+    console.log("Sem configuração de fundo salva.");
+  }
+}
+ 
+async function handleHeroBgUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+ 
+  const btn = document.querySelector(".settings-section .btn-primary");
+  btn.textContent = "Fazendo upload...";
+  btn.disabled = true;
+ 
+  try {
+    const url = await uploadImage(file);
+    await updateSetting("hero_bg", url);
+ 
+    // atualiza preview
+    const box = document.getElementById("hero-bg-preview-box");
+    if (box) {
+      const img = document.createElement("img");
+      img.id = "hero-bg-preview-box";
+      img.className = "hero-bg-preview";
+      img.src = url;
+      img.alt = "Fundo atual";
+      box.replaceWith(img);
+    }
+ 
+    const btnRemove = document.getElementById("btn-remove-bg");
+    if (btnRemove) btnRemove.style.display = "inline-flex";
+ 
+    alert("Fundo atualizado com sucesso!");
+  } catch(err) {
+    console.error(err);
+    alert("Erro ao fazer upload: " + err.message);
+  } finally {
+    btn.textContent = "Upload de imagem";
+    btn.disabled = false;
+    e.target.value = "";
+  }
+}
+ 
+async function removeHeroBg() {
+  if (!confirm("Remover a imagem de fundo e voltar ao grid padrão?")) return;
+  try {
+    await updateSetting("hero_bg", "");
+ 
+    // volta pro placeholder
+    const box = document.getElementById("hero-bg-preview-box");
+    if (box) {
+      const div = document.createElement("div");
+      div.id = "hero-bg-preview-box";
+      div.className = "hero-bg-default";
+      div.textContent = "Grid padrão (default)";
+      box.replaceWith(div);
+    }
+ 
+    const btnRemove = document.getElementById("btn-remove-bg");
+    if (btnRemove) btnRemove.style.display = "none";
+ 
+    alert("Fundo removido. O site voltará ao grid padrão.");
+  } catch(err) {
+    console.error(err);
+    alert("Erro ao remover fundo: " + err.message);
+  }
+}
+ 
+window.handleHeroBgUpload = handleHeroBgUpload;
+window.removeHeroBg = removeHeroBg;
+ 
+// Carrega a configuração ao abrir o painel
+document.addEventListener("DOMContentLoaded", () => {
+  loadHeroBgSetting();
+});

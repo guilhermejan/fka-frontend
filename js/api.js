@@ -1,3 +1,6 @@
+let products = [];
+let nextId = 1;
+
 // URL do backend em produção
 const API_URL = "https://fka-backend.onrender.com/api";
 
@@ -30,7 +33,6 @@ async function uploadImage(file) {
   const data = await response.json();
   return data.secure_url;
 }
-
 window.uploadImage = uploadImage;
 
 // ===============================
@@ -91,8 +93,30 @@ async function setFeatured(productId, allProducts) {
   return Promise.all(updates);
 }
 
+// ===============================
+// SETTINGS
+// ===============================
+async function getSetting(key) {
+  const response = await fetch(`${API_URL}/settings/${key}`);
+  if (!response.ok) return "";
+  const data = await response.json();
+  return data.value || "";
+}
+
+async function updateSetting(key, value) {
+  const response = await fetch(`${API_URL}/settings/${key}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify({ value })
+  });
+  if (!response.ok) throw new Error("Falha ao salvar configuração");
+  return await response.json();
+}
+
 window.getProducts = getProducts;
 window.createProduct = createProduct;
 window.updateProduct = updateProduct;
 window.deleteProduct = deleteProduct;
 window.setFeatured = setFeatured;
+window.getSetting = getSetting;
+window.updateSetting = updateSetting;

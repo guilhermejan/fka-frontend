@@ -41,7 +41,7 @@ function openProdModal(id) {
   content.innerHTML = `
     ${p.img
       ? `<img class="prod-modal-img" src="${p.img}" alt="${p.name}">`
-      : `<div class="prod-modal-img-placeholder"><i class="ti ti-keyboard"></i></div>`
+      : `<div class="prod-modal-img-placeholder">Imagem não disponível</div>`
     }
     <div class="prod-modal-body">
       <div class="prod-modal-top">
@@ -65,11 +65,11 @@ function openProdModal(id) {
 
   const overlay = document.getElementById("prod-modal-overlay");
   overlay.style.display = "flex";
-  // força reflow pra animação funcionar
   void overlay.offsetWidth;
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
 }
+window.openProdModal = openProdModal;
 
 function closeProdModal(e) {
   if (e && e.currentTarget !== e.target) return;
@@ -82,16 +82,12 @@ function closeProdModal(e) {
 }
 window.closeProdModal = closeProdModal;
 
-// fecha com ESC
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
     const overlay = document.getElementById("prod-modal-overlay");
     if (overlay && overlay.classList.contains("open")) {
       overlay.classList.remove("open");
-      setTimeout(() => {
-        overlay.style.display = "none";
-        document.body.style.overflow = "";
-      }, 240);
+      setTimeout(() => { overlay.style.display="none"; document.body.style.overflow=""; }, 240);
     }
   }
 });
@@ -106,11 +102,11 @@ function renderCarousel(){
     return;
   }
   track.innerHTML = active.map(p=>`
-    <div class="prod-card" onclick="handleCardClick(event, ${p.id})">
+    <div class="prod-card" onclick="handleCardClick(event,${p.id})">
       ${p.badge ? `<span class="prod-badge-new">${p.badge}</span>` : ""}
       ${p.img
         ? `<img class="prod-card-img" src="${p.img}" alt="${p.name}" draggable="false">`
-        : `<div class="prod-card-img-placeholder"><i class="ti ti-keyboard"></i></div>`
+        : `<div class="prod-card-img-placeholder"><span>Imagem não disponível</span></div>`
       }
       <div class="prod-card-body">
         <div class="prod-card-cat">${p.cat}</div>
@@ -128,9 +124,7 @@ function renderCarousel(){
   `).join("");
 }
 
-// Só abre modal se não foi um drag
 function handleCardClick(e, id) {
-  // se o clique veio do botão de WhatsApp, ignora
   if (e.target.closest(".prod-wpp-btn")) return;
   openProdModal(id);
 }
@@ -153,7 +147,7 @@ function renderFeaturedSection(){
   inner.innerHTML = `
     ${p.img
       ? `<img src="${p.img}" alt="${p.name}" class="feat-prod-img">`
-      : `<div class="feat-prod-placeholder"><i class="ti ti-keyboard"></i></div>`
+      : `<div class="feat-prod-placeholder">Imagem não disponível</div>`
     }
     <div class="featured-text">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -173,16 +167,44 @@ function renderFeaturedSection(){
   `;
 }
 
+// ─── HERO BACKGROUND ───
+async function applyHeroBg() {
+  try {
+    const url = await getSetting("hero_bg");
+    const hero = document.querySelector(".hero");
+    if (!hero) return;
+    if (url && url.trim() !== "") {
+      hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('${url}')`;
+      hero.style.backgroundSize = "cover";
+      hero.style.backgroundPosition = "center";
+      // esconde o grid quadriculado
+      const grid = hero.querySelector(".hero-grid");
+      const glow = hero.querySelector(".hero-glow");
+      if (grid) grid.style.display = "none";
+      if (glow) glow.style.display = "none";
+    } else {
+      // volta pro default
+      hero.style.backgroundImage = "";
+      hero.style.backgroundSize = "";
+      hero.style.backgroundPosition = "";
+      const grid = hero.querySelector(".hero-grid");
+      const glow = hero.querySelector(".hero-glow");
+      if (grid) grid.style.display = "";
+      if (glow) glow.style.display = "";
+    }
+  } catch(e) {
+    console.log("Sem configuração de fundo:", e);
+  }
+}
+
 async function loadProductsFromAPI() {
   products = await getProducts();
   nextId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
   renderCarousel();
-  if (typeof renderFeaturedSection === "function") renderFeaturedSection();
+  renderFeaturedSection();
+  applyHeroBg();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadProductsFromAPI();
 });
-
-// Função exposta pro botão X do modal
-window.openProdModal = openProdModal;
