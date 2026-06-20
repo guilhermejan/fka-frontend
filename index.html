@@ -17,11 +17,7 @@
 html{scroll-behavior:smooth}
 body{font-family:"Inter",sans-serif;background:var(--bg);color:#e0e0e0;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
-
-/* ===== SITE ===== */
 #site{display:block}
-
-/* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:68px;border-bottom:1px solid var(--border-gold);background:rgba(10,10,10,.97);position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
 .logo-img{height:42px;width:auto}
 .nav-links{display:flex;gap:26px;align-items:center}
@@ -29,8 +25,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .nav-links a:hover{color:var(--gold-light)}
 .btn-nav{background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));color:#0a0a0a;padding:10px 20px;border-radius:5px;font-weight:700;font-size:12px;letter-spacing:.5px;cursor:pointer;border:none;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
 .btn-nav:hover{opacity:.87}
-
-/* HERO */
 .hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 40px 60px;position:relative;overflow:hidden}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.03) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
 .hero-glow{position:absolute;top:-5%;left:50%;transform:translateX(-50%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(201,168,76,.07) 0%,transparent 70%);pointer-events:none}
@@ -47,13 +41,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .hero-stats{display:flex;gap:48px;padding-top:32px;border-top:1px solid rgba(255,255,255,.07);position:relative;z-index:1}
 .stat-num{font-size:22px;font-weight:900;color:var(--gold-light)}
 .stat-label{font-size:10px;color:#555;margin-top:3px;letter-spacing:1px;text-transform:uppercase}
-
-/* BADGE STRIP */
 .badge-strip{background:#0c0c0c;border-top:1px solid rgba(201,168,76,.08);border-bottom:1px solid rgba(201,168,76,.08);padding:14px 40px;display:flex;align-items:center;justify-content:center;gap:34px;flex-wrap:wrap}
 .badge-item{display:flex;align-items:center;gap:8px;color:#555;font-size:12px;font-weight:500}
 .badge-item i{color:var(--gold);font-size:15px}
-
-/* ===== CARROSSEL ===== */
 .carousel-section{padding:70px 0;background:var(--bg2)}
 .carousel-header{display:flex;align-items:flex-end;justify-content:space-between;padding:0 40px;margin-bottom:28px}
 .carousel-header-left .section-tag{display:inline-block;background:rgba(201,168,76,.1);color:var(--gold-light);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:4px 12px;border-radius:20px;border:1px solid rgba(201,168,76,.2);text-transform:uppercase;margin-bottom:8px}
@@ -62,15 +52,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .ver-todos{display:inline-flex;align-items:center;gap:6px;color:var(--gold);font-size:13px;font-weight:600;transition:gap .2s}
 .ver-todos:hover{gap:10px}
 .gold-line{width:32px;height:2.5px;background:linear-gradient(90deg,var(--gold),var(--gold-light));margin-top:10px;border-radius:2px}
-
-/* TRACK */
 .carousel-outer{position:relative;overflow:hidden;padding:8px 0 16px}
 .carousel-track{display:flex;gap:16px;padding:0 40px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;cursor:grab;user-select:none;scrollbar-width:none}
 .carousel-track::-webkit-scrollbar{display:none}
 .carousel-track.dragging{cursor:grabbing}
-
-/* PRODUCT CARD */
-.prod-card{flex:0 0 220px;background:var(--bg4);border:1px solid var(--border);border-radius:12px;overflow:hidden;scroll-snap-align:start;transition:border-color .25s,transform .2s;position:relative}
+.prod-card{flex:0 0 220px;background:var(--bg4);border:1px solid var(--border);border-radius:12px;overflow:hidden;scroll-snap-align:start;transition:border-color .25s,transform .2s;position:relative;cursor:pointer}
 .prod-card:hover{border-color:rgba(201,168,76,.35);transform:translateY(-3px)}
 .prod-card-img{width:100%;height:180px;object-fit:cover;background:var(--bg3);display:block}
 .prod-card-img-placeholder{width:100%;height:180px;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:#2a2a2a;font-size:42px}
@@ -84,29 +70,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .prod-wpp-btn{width:100%;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.18);color:var(--gold);font-size:11px;font-weight:700;padding:8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;transition:background .2s;letter-spacing:.3px}
 .prod-wpp-btn:hover{background:rgba(201,168,76,.18)}
 .prod-badge-new{position:absolute;top:10px;left:10px;background:var(--gold);color:#0a0a0a;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
-/* PRODUTO EM DESTAQUE */
-.feat-prod-img{
-    width:300px;
-    height:300px;
-    object-fit:contain;
-    flex-shrink:0;
-}
-
-/* SCROLL INDICATOR */
+.feat-prod-img{width:300px;height:300px;object-fit:contain;flex-shrink:0}
 .scroll-hint{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;color:#333;font-size:11px}
 .scroll-hint i{font-size:14px}
-
-/* FEATURED */
 .featured-section{padding:70px 40px;background:var(--bg)}
 .featured-inner{max-width:840px;margin:0 auto;background:var(--bg3);border:1px solid var(--border-gold);border-radius:14px;padding:44px;display:flex;gap:40px;align-items:center;flex-wrap:wrap}
-.featured-icon{width:90px;height:90px;background:rgba(201,168,76,.08);border-radius:14px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(201,168,76,.2);flex-shrink:0}
-.featured-icon i{font-size:44px;color:var(--gold)}
 .featured-text h2{font-size:21px;font-weight:800;color:#fff;margin-bottom:8px}
 .featured-text p{font-size:13px;color:#666;line-height:1.75;margin-bottom:14px;max-width:490px}
 .feat-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .feat-badge{background:rgba(201,168,76,.08);color:var(--gold);font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid rgba(201,168,76,.18)}
-
-/* BENEFITS */
 .benefits-section{padding:70px 40px;background:var(--bg2)}
 .benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;max-width:840px;margin:0 auto}
 .benefit-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:24px 18px;text-align:center}
@@ -114,8 +86,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .benefit-icon i{font-size:20px;color:var(--gold)}
 .benefit-card h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
 .benefit-card p{font-size:11.5px;color:#555;line-height:1.6}
-
-/* REVIEWS */
 .reviews-section{padding:70px 40px;background:var(--bg)}
 .reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:840px;margin:0 auto}
 .review-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:20px}
@@ -123,8 +93,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .review-text{font-size:12px;color:#888;line-height:1.75;margin-bottom:12px;font-style:italic}
 .review-author{display:flex;align-items:center;gap:10px}
 .avatar{width:34px;height:34px;border-radius:50%;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);border:1px solid rgba(201,168,76,.2);flex-shrink:0}
-
-/* CTA */
 .cta-section{padding:80px 40px;background:var(--bg2);text-align:center;position:relative;overflow:hidden}
 .cta-glow{position:absolute;bottom:-10%;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(201,168,76,.06) 0%,transparent 70%);pointer-events:none}
 .cta-box{max-width:540px;margin:0 auto;background:var(--bg3);border:1px solid var(--border-gold);border-radius:14px;padding:46px 40px;position:relative}
@@ -140,81 +108,174 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px
 .btn-wpp:hover{opacity:.87}
 .btn-catalog{background:transparent;color:var(--gold-light);border:1.5px solid var(--gold);padding:13px 20px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .2s}
 .btn-catalog:hover{background:rgba(201,168,76,.08)}
-
-/* FOOTER */
 footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:var(--bg)}
 .footer-logo{height:32px}
 .footer-text{font-size:11px;color:#333}
 .footer-links{display:flex;gap:16px}
 .footer-links a{color:#444;font-size:11px;transition:color .2s}
 .footer-links a:hover{color:var(--gold)}
-
-/* SECTION SHARED */
 .section-tag-center{display:block;text-align:center;width:fit-content;margin:0 auto 10px;background:rgba(201,168,76,.1);color:var(--gold-light);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:4px 12px;border-radius:20px;border:1px solid rgba(201,168,76,.2);text-transform:uppercase}
 .section-title{font-size:26px;font-weight:800;color:#fff;text-align:center;margin-bottom:5px;letter-spacing:-.4px}
 .section-sub{font-size:13px;color:#555;text-align:center;margin-bottom:36px}
 .gold-line-center{width:32px;height:2.5px;background:linear-gradient(90deg,var(--gold),var(--gold-light));margin:10px auto 32px;border-radius:2px}
 
-/* STATS */
-.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.astat{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:16px 18px}
-.astat-label{font-size:10px;font-weight:600;color:#555;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
-.astat-val{font-size:22px;font-weight:800;color:var(--gold-light)}
-
-/* TABLE */
-.admin-table-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-table{width:100%;border-collapse:collapse}
-th{background:var(--bg4);padding:10px 16px;font-size:10px;font-weight:600;color:#444;text-align:left;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border)}
-td{padding:12px 16px;font-size:13px;color:#bbb;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.015)}
-.td-thumb{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--border)}
-.td-no-thumb{width:42px;height:42px;border-radius:7px;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:#333;font-size:17px}
-.cat-pill{background:rgba(201,168,76,.08);color:var(--gold);font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;border:1px solid rgba(201,168,76,.18);white-space:nowrap;letter-spacing:.3px}
-.price-cell{font-weight:700;color:var(--gold-light);font-size:13px}
-.status-on{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#3ecf8e}
-.status-off{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#444}
-.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.dot-on{background:#3ecf8e}
-.dot-off{background:#333}
-.action-wrap{display:flex;gap:6px}
-.btn-edit-row{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.18);padding:5px 11px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background .2s}
-.btn-edit-row:hover{background:rgba(201,168,76,.18)}
-.btn-del-row{background:rgba(224,85,85,.07);color:#e05555;border:1px solid rgba(224,85,85,.18);padding:5px 9px;border-radius:5px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background .2s}
-.btn-del-row:hover{background:rgba(224,85,85,.18)}
-.empty-table{text-align:center;padding:50px 20px;color:#333}
-.empty-table i{font-size:36px;display:block;margin-bottom:10px}
-.empty-table p{font-size:13px}
-
-/* IMG UPLOAD */
-.img-drop{border:2px dashed rgba(201,168,76,.25);border-radius:8px;padding:22px;text-align:center;cursor:pointer;position:relative;background:var(--bg4);transition:border-color .2s}
-.img-drop:hover{border-color:var(--gold)}
-.img-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.img-drop i{font-size:26px;color:#333;display:block;margin-bottom:6px}
-.img-drop p{font-size:12px;color:#444}
-.img-drop span{font-size:11px;color:var(--gold)}
-.img-prev{width:100%;max-height:130px;object-fit:contain;border-radius:6px;margin-top:10px;display:none}
-
-/* TOGGLE */
-.tog-wrap{display:flex;align-items:center;gap:9px;margin-top:6px}
-.tog{position:relative;width:36px;height:19px;cursor:pointer;flex-shrink:0}
-.tog input{opacity:0;width:0;height:0}
-.tog-track{position:absolute;inset:0;background:#222;border-radius:20px;border:1px solid #333;transition:.2s}
-.tog-track:before{content:"";position:absolute;width:13px;height:13px;left:2px;top:2px;background:#444;border-radius:50%;transition:.2s}
-.tog input:checked+.tog-track{background:rgba(201,168,76,.25);border-color:var(--gold)}
-.tog input:checked+.tog-track:before{transform:translateX(17px);background:var(--gold)}
-.tog-lbl{font-size:12px;color:#666}
-
-.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
-.btn-cancel{background:transparent;border:1px solid var(--border);color:#666;padding:9px 18px;border-radius:6px;font-size:13px;cursor:pointer;transition:border-color .2s}
-.btn-cancel:hover{border-color:#555}
-.btn-save{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:#0a0a0a;border:none;padding:9px 22px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;transition:opacity .2s}
-.btn-save:hover{opacity:.85}
-
+/* ===== MODAL PRODUTO ===== */
+.prod-modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(6px);
+  z-index:200;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  opacity:0;
+  transition:opacity .22s ease;
+}
+.prod-modal-overlay.open{
+  display:flex;
+  opacity:1;
+}
+.prod-modal{
+  background:#131313;
+  border:1px solid var(--border-gold);
+  border-radius:16px;
+  width:100%;
+  max-width:640px;
+  max-height:90vh;
+  overflow-y:auto;
+  transform:translateY(12px) scale(.97);
+  opacity:0;
+  transition:transform .24s ease, opacity .24s ease;
+  position:relative;
+}
+.prod-modal-overlay.open .prod-modal{
+  transform:translateY(0) scale(1);
+  opacity:1;
+}
+.prod-modal-img{
+  width:100%;
+  height:280px;
+  object-fit:cover;
+  border-radius:16px 16px 0 0;
+  display:block;
+  background:var(--bg3);
+}
+.prod-modal-img-placeholder{
+  width:100%;
+  height:280px;
+  background:var(--bg3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:72px;
+  color:#2a2a2a;
+  border-radius:16px 16px 0 0;
+}
+.prod-modal-body{
+  padding:28px;
+}
+.prod-modal-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.prod-modal-cat{
+  font-size:10px;
+  font-weight:700;
+  color:var(--gold);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.prod-modal-name{
+  font-size:22px;
+  font-weight:800;
+  color:#fff;
+  line-height:1.2;
+  letter-spacing:-.3px;
+}
+.prod-modal-badge{
+  background:var(--gold);
+  color:#0a0a0a;
+  font-size:9px;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:4px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  white-space:nowrap;
+  flex-shrink:0;
+  align-self:flex-start;
+  margin-top:4px;
+}
+.prod-modal-desc{
+  font-size:13px;
+  color:#777;
+  line-height:1.8;
+  margin-bottom:22px;
+}
+.prod-modal-prices{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  margin-bottom:24px;
+}
+.prod-modal-price{
+  font-size:28px;
+  font-weight:900;
+  color:var(--gold-light);
+}
+.prod-modal-oldprice{
+  font-size:14px;
+  color:#444;
+  text-decoration:line-through;
+}
+.prod-modal-wpp{
+  width:100%;
+  background:linear-gradient(135deg,#1a9e50,#25d366);
+  color:#fff;
+  border:none;
+  padding:15px;
+  border-radius:8px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  transition:opacity .2s;
+  letter-spacing:.3px;
+  text-decoration:none;
+}
+.prod-modal-wpp:hover{opacity:.88}
+.prod-modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.1);
+  color:#fff;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  font-size:18px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .15s;
+  z-index:10;
+  line-height:1;
+}
+.prod-modal-close:hover{background:rgba(255,255,255,.1)}
 </style>
 </head>
 <body>
-<!-- ============ SITE ============ -->
 <div id="site">
 
 <nav>
@@ -222,11 +283,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <a href="#produtos">Produtos</a>
     <a href="#beneficios">Benefícios</a>
     <a href="#avaliacoes">Avaliações</a>
-    <a href="https://wa.me/" class="btn-nav"><i class="ti ti-brand-whatsapp" style="font-size:14px"></i>Grupo VIP</a>
+    <a href="https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_t" class="btn-nav"><i class="ti ti-brand-whatsapp" style="font-size:14px"></i>Grupo VIP</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
@@ -234,7 +294,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <h1>Setup de elite.<br><span>Acesso exclusivo.</span></h1>
   <p>Teclados magnéticos, mouses de alto desempenho, headsets e acessórios importados direto para você.</p>
   <div class="hero-btns">
-    <a href="https://wa.me/" class="btn-gold"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Entrar no Grupo VIP</a>
+    <a href="https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_t" class="btn-gold"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Entrar no Grupo VIP</a>
     <a href="#produtos" class="btn-outline"><i class="ti ti-keyboard" style="font-size:15px"></i>Ver Produtos</a>
   </div>
   <div class="hero-stats">
@@ -245,7 +305,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
 </section>
 
-<!-- BADGES -->
 <div class="badge-strip">
   <div class="badge-item"><i class="ti ti-truck-delivery"></i>Entrega para todo o Brasil</div>
   <div class="badge-item"><i class="ti ti-shield-check"></i>Produtos com garantia</div>
@@ -254,87 +313,54 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="badge-item"><i class="ti ti-refresh"></i>Trocas facilitadas</div>
 </div>
 
-<!-- CARROSSEL PRODUTOS -->
 <section class="carousel-section" id="produtos">
   <div class="carousel-header">
     <div class="carousel-header-left">
       <span class="section-tag">Catálogo</span>
       <h2>Mais Vendidos</h2>
-      <p>Arraste para explorar todos os produtos</p>
+      <p>Clique em um produto para ver detalhes</p>
       <div class="gold-line"></div>
     </div>
-    <a href="https://wa.me/" class="ver-todos">Ver todos <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+    <a href="https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_t" class="ver-todos">Ver todos <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
   </div>
   <div class="carousel-outer">
-    <div class="carousel-track" id="carousel-track">
-      <!-- products rendered here -->
-    </div>
+    <div class="carousel-track" id="carousel-track"></div>
   </div>
   <div class="scroll-hint" id="scroll-hint">
     <i class="ti ti-hand-finger"></i> Arraste para o lado para ver mais
   </div>
 </section>
 
-<!-- FEATURED -->
 <section class="featured-section" id="featured-section">
   <span class="section-tag-center">Destaque</span>
   <div class="section-title" id="feat-title">Produto em Destaque</div>
   <div class="gold-line-center"></div>
-  <div class="featured-inner" id="feat-inner">
-    <!-- rendered by JS -->
-  </div>
+  <div class="featured-inner" id="feat-inner"></div>
 </section>
 
-<!-- BENEFITS -->
 <section class="benefits-section" id="beneficios">
   <span class="section-tag-center">Por que a FKA</span>
   <div class="section-title">Vantagens Exclusivas</div>
   <div class="gold-line-center"></div>
   <div class="benefits-grid">
-    <div class="benefit-card">
-      <div class="benefit-icon"><i class="ti ti-package-import"></i></div>
-      <h4>Importação Direta</h4><p>Produtos originais sem intermediários. Preço justo, sem surpresas.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon"><i class="ti ti-star"></i></div>
-      <h4>Marcas Exclusivas</h4><p>Acesso a produtos que não existem nas grandes lojas brasileiras.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon"><i class="ti ti-brand-whatsapp"></i></div>
-      <h4>Atendimento VIP</h4><p>Suporte rápido via WhatsApp. Respondemos em minutos.</p>
-    </div>
-    <div class="benefit-card">
-      <div class="benefit-icon"><i class="ti ti-receipt-2"></i></div>
-      <h4>Melhor Preço</h4><p>Monitoramos o mercado para garantir o menor preço sempre.</p>
-    </div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="ti ti-package-import"></i></div><h4>Importação Direta</h4><p>Produtos originais sem intermediários. Preço justo, sem surpresas.</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="ti ti-star"></i></div><h4>Marcas Exclusivas</h4><p>Acesso a produtos que não existem nas grandes lojas brasileiras.</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="ti ti-brand-whatsapp"></i></div><h4>Atendimento VIP</h4><p>Suporte rápido via WhatsApp. Respondemos em minutos.</p></div>
+    <div class="benefit-card"><div class="benefit-icon"><i class="ti ti-receipt-2"></i></div><h4>Melhor Preço</h4><p>Monitoramos o mercado para garantir o menor preço sempre.</p></div>
   </div>
 </section>
 
-<!-- REVIEWS -->
 <section class="reviews-section" id="avaliacoes">
   <span class="section-tag-center">Depoimentos</span>
   <div class="section-title">O que dizem nossos clientes</div>
   <div class="gold-line-center"></div>
   <div class="reviews-grid">
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Comprei o teclado Wooting pelo grupo VIP antes de lançar no mercado. Qualidade absurda e preço muito abaixo."</p>
-      <div class="review-author"><div class="avatar">GL</div><div><div style="font-size:12px;font-weight:700;color:#ddd">Gabriel L.</div><div style="font-size:11px;color:#555">São Paulo, SP</div></div></div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Entrega rápida, produto original e embalagem impecável. Já é a terceira vez que compro na FKA."</p>
-      <div class="review-author"><div class="avatar">MR</div><div><div style="font-size:12px;font-weight:700;color:#ddd">Marina R.</div><div style="font-size:11px;color:#555">Belo Horizonte, MG</div></div></div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Atendimento via WhatsApp perfeito. Me ajudaram a escolher o mouse certo. Chegou em 4 dias!"</p>
-      <div class="review-author"><div class="avatar">FT</div><div><div style="font-size:12px;font-weight:700;color:#ddd">Felipe T.</div><div style="font-size:11px;color:#555">Curitiba, PR</div></div></div>
-    </div>
+    <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">"Comprei o teclado Wooting pelo grupo VIP antes de lançar no mercado. Qualidade absurda e preço muito abaixo."</p><div class="review-author"><div class="avatar">GL</div><div><div style="font-size:12px;font-weight:700;color:#ddd">Gabriel L.</div><div style="font-size:11px;color:#555">São Paulo, SP</div></div></div></div>
+    <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">"Entrega rápida, produto original e embalagem impecável. Já é a terceira vez que compro na FKA."</p><div class="review-author"><div class="avatar">MR</div><div><div style="font-size:12px;font-weight:700;color:#ddd">Marina R.</div><div style="font-size:11px;color:#555">Belo Horizonte, MG</div></div></div></div>
+    <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">"Atendimento via WhatsApp perfeito. Me ajudaram a escolher o mouse certo. Chegou em 4 dias!"</p><div class="review-author"><div class="avatar">FT</div><div><div style="font-size:12px;font-weight:700;color:#ddd">Felipe T.</div><div style="font-size:11px;color:#555">Curitiba, PR</div></div></div></div>
   </div>
 </section>
 
-<!-- CTA -->
 <section class="cta-section">
   <div class="cta-glow"></div>
   <div class="cta-box">
@@ -348,7 +374,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="cta-perk"><i class="ti ti-message-circle"></i>Suporte direto com a equipe FKA</div>
     </div>
     <div class="cta-btns">
-      <a href="https://wa.me/" class="btn-wpp"><i class="ti ti-brand-whatsapp" style="font-size:17px"></i>Entrar no Grupo VIP</a>
+      <a href="https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_t" class="btn-wpp"><i class="ti ti-brand-whatsapp" style="font-size:17px"></i>Entrar no Grupo VIP</a>
       <a href="#produtos" class="btn-catalog"><i class="ti ti-keyboard" style="font-size:16px"></i>Ver Produtos</a>
     </div>
   </div>
@@ -357,14 +383,22 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <footer>
   <div class="footer-text">© 2025 FKA Imports · Periféricos Gamers Importados</div>
   <div class="footer-links">
-    <a href="https://wa.me/">WhatsApp</a>
+    <a href="https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_t">WhatsApp</a>
     <a href="#produtos">Produtos</a>
     <a href="#">Instagram</a>
   </div>
 </footer>
-</div><!-- /site -->
+</div>
 
-</body>
+<!-- MODAL DETALHE PRODUTO -->
+<div class="prod-modal-overlay" id="prod-modal-overlay" onclick="closeProdModal(event)">
+  <div class="prod-modal" id="prod-modal">
+    <button class="prod-modal-close" onclick="closeProdModal()">&times;</button>
+    <div id="prod-modal-content"></div>
+  </div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/site.js"></script>
+</body>
 </html>
