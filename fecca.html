@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Admin - FKA Imports</title>
+<link rel="stylesheet" href="./css/admin.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <img src="./assets/images/logo.png" class="logo" alt="FKA">
+    <h1>Painel <span>Admin</span></h1>
+  </div>
+  <div class="topbar-right">
+    <a href="../index.html" class="btn-outline" target="_blank">Ver Site</a>
+    <button class="btn-logout" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<main class="admin-content">
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Total</span>
+      <strong id="stat-total">0</strong>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Ativos</span>
+      <strong id="stat-active">0</strong>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Categorias</span>
+      <strong id="stat-categories">0</strong>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Com Foto</span>
+      <strong id="stat-with-photo">0</strong>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <div class="section-header">
+      <div>
+        <h2>Produto em Destaque</h2>
+        <p>Exibido na seção de destaque da landing page</p>
+      </div>
+      <button class="btn-primary" onclick="openFeaturedModal()">★ Trocar Destaque</button>
+    </div>
+    <div class="featured-box" id="featured-box">
+      <span class="empty-text">Nenhum produto em destaque</span>
+    </div>
+  </section>
+
+  <section class="products-section">
+    <div class="section-header">
+      <div>
+        <h2>Produtos do Catálogo</h2>
+        <p>Gerencie os produtos exibidos no carrossel do site</p>
+      </div>
+      <button class="btn-primary" onclick="openProductModal()">+ Novo Produto</button>
+    </div>
+
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>De</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="products-table">
+          <tr><td colspan="7" class="empty-row">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL PRODUTO -->
+<div class="modal-overlay" id="product-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="product-modal-title">Novo Produto</h3>
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+    </div>
+    <form id="product-form">
+      <input type="hidden" id="product-id">
+
+      <label>Nome
+        <input type="text" id="product-name" required>
+      </label>
+
+      <label>Categoria
+        <input type="text" id="product-cat" required>
+      </label>
+
+      <div class="form-row">
+        <label>Preço (R$)
+          <input type="number" step="0.01" id="product-price" required>
+        </label>
+        <label>Preço Antigo (R$)
+          <input type="number" step="0.01" id="product-oldprice">
+        </label>
+      </div>
+
+      <label>Imagem
+        <div class="img-upload-box" onclick="document.getElementById('product-img-file').click()">
+          <img id="product-img-preview" style="display:none; width:100%; max-height:160px; object-fit:contain; border-radius:6px; margin-bottom:8px;">
+          <span id="product-img-label">Clique para selecionar uma imagem</span>
+          <input type="file" id="product-img-file" accept="image/*" style="display:none" onchange="handleImgUpload(event)">
+        </div>
+        <input type="hidden" id="product-img">
+      </label>
+
+      <label>Selo / Badge
+        <input type="text" id="product-badge" placeholder="Ex: Promoção">
+      </label>
+
+      <label>Descrição
+        <textarea id="product-desc" rows="3"></textarea>
+      </label>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="product-active" checked>
+        Produto ativo
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-outline" onclick="closeProductModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DESTAQUE -->
+<div class="modal-overlay" id="featured-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Trocar Produto em Destaque</h3>
+      <button class="modal-close" onclick="closeFeaturedModal()">&times;</button>
+    </div>
+    <div id="featured-options" class="featured-options">
+      <p class="empty-row">Carregando produtos...</p>
+    </div>
+  </div>
+</div>
+
+<script src="./js/api.js"></script>
+<script src="./js/admin.js"></script>
+</body>
+</html>
