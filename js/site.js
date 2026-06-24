@@ -13,6 +13,22 @@ function parseImgs(raw) {
   return [];
 }
 
+function formatDesc(text) {
+  if (!text) return "";
+  return text
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => line.startsWith("*") 
+      ? `<span style="display:block;padding-left:12px;position:relative">
+           <span style="position:absolute;left:0;color:var(--gold)">›</span>
+           ${line.slice(1).trim()}
+         </span>`
+      : `<span style="display:block">${line}</span>`
+    )
+    .join("");
+}
+
 (function(){
   let track, isDragging=false, startX=0, scrollLeft=0, dragMoved=false;
   document.addEventListener("DOMContentLoaded",()=>{
@@ -92,7 +108,7 @@ function openProdModal(id) {
         </div>
         ${p.badge ? `<span class="prod-modal-badge">${p.badge}</span>` : ""}
       </div>
-      ${p.description ? `<div class="prod-modal-desc">${p.description}</div>` : ""}
+      ${p.description ? `<div class="prod-modal-desc">${formatDesc(p.description)}</div>` : ""}
       <div class="prod-modal-prices">
         <span class="prod-modal-price">R$ ${Number(p.price).toLocaleString("pt-BR", {minimumFractionDigits:2})}</span>
         ${p.oldprice ? `<span class="prod-modal-oldprice">R$ ${Number(p.oldprice).toLocaleString("pt-BR", {minimumFractionDigits:2})}</span>` : ""}
@@ -156,7 +172,7 @@ function renderCarousel(){
       <div class="prod-card-body">
         <div class="prod-card-cat">${p.cat}</div>
         <div class="prod-card-name" title="${p.name}">${p.name}</div>
-        <div class="prod-card-desc">${p.description||""}</div>
+        <div class="prod-card-desc">${formatDesc(p.description)}</div>
         <div class="prod-card-prices">
           <span class="prod-price">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
           ${p.oldprice ? `<span class="prod-oldprice">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>` : ""}
