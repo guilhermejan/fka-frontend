@@ -110,33 +110,29 @@ function renderImgSlots() {
   const totalSlots = 5;
   let html = "";
 
-  // slots com imagens existentes
-  existingImgUrls.forEach((url, i) => {
-    html += `
-      <div class="img-slot filled" data-idx="${i}">
-        <img src="${escapeHtml(url)}" alt="">
-        ${i === 0 ? `<span class="img-slot-principal">Principal</span>` : ""}
-        <button class="img-slot-remove" onclick="removeImgSlot(${i})" title="Remover">&times;</button>
-      </div>`;
-  });
+  const allImgs = [
+    ...existingImgUrls.map(url => ({ type: "url", value: url })),
+    ...pendingImgFiles.map((f, i) => ({ type: "pending", value: i, file: f }))
+  ];
 
-  // slots com arquivos pendentes (ainda não upados)
-  pendingImgFiles.forEach((f, i) => {
-    const objUrl = URL.createObjectURL(f);
-    const isFirst = existingImgUrls.length === 0 && i === 0;
+  allImgs.forEach((item, i) => {
+    const src = item.type === "url" ? item.value : URL.createObjectURL(item.file);
+    const isFirst = i === 0;
+    const removeCall = item.type === "url"
+      ? `removeImgSlot(${existingImgUrls.indexOf(item.value)})`
+      : `removePendingSlot(${item.value})`;
+
     html += `
-      <div class="img-slot filled pending" data-pending="${i}">
-        <img src="${objUrl}" alt="">
+      <div class="img-slot filled">
+        <img src="${escapeHtml(src)}" alt="">
         ${isFirst ? `<span class="img-slot-principal">Principal</span>` : ""}
-        <button class="img-slot-remove" onclick="removePendingSlot(${i})" title="Remover">&times;</button>
+        <button class="img-slot-remove" onclick="${removeCall}" title="Remover">&times;</button>
       </div>`;
   });
 
-  // slots vazios (para adicionar)
-  const usedSlots = existingImgUrls.length + pendingImgFiles.length;
-  for (let i = usedSlots; i < totalSlots; i++) {
+  for (let i = allImgs.length; i < totalSlots; i++) {
     html += `
-      <div class="img-slot empty" onclick="document.getElementById('product-img-file').click()" title="Adicionar imagem">
+      <div class="img-slot empty" onclick="triggerSlotUpload()" title="Adicionar imagem">
         <span class="img-slot-plus">+</span>
         <span class="img-slot-label">Adicionar</span>
       </div>`;
