@@ -829,7 +829,7 @@ tbody tr:last-child td {
   justify-content: center;
   cursor: pointer;
   padding: 0;
-  opacity: 0;
+  opacity: 1;
   transition: opacity .15s;
 }
 

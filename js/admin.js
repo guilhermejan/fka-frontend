@@ -1,6 +1,5 @@
 let allProducts = [];
-let pendingImgFiles = []; // array de Files pendentes
-let existingImgUrls = []; // array de URLs já salvas
+let imgUrls = []; // todas as URLs finais (existentes + recém upadas)
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!localStorage.getItem("token")) {
@@ -17,6 +16,10 @@ function logout() {
   window.location.href = "./acesso.html";
 }
 window.logout = logout;
+
+// ===============================
+// CARREGAR PRODUTOS
+// ===============================
 
 async function loadProducts() {
   const tbody = document.getElementById("products-table");
@@ -100,39 +103,41 @@ function renderFeatured() {
 }
 
 // ===============================
-// GALERIA DE IMAGENS — SLOTS
+// SLOTS DE IMAGEM
 // ===============================
+// imgUrls é um array simples de strings:
+// - URLs já salvas no Cloudinary começam com "https://"
+// - Arquivos pendentes são armazenados como objetos File com uma
+//   propriedade _objectUrl temporária para preview
 
 function renderImgSlots() {
   const container = document.getElementById("img-slots-container");
   if (!container) return;
 
-  const totalSlots = 5;
+  const MAX = 5;
   let html = "";
 
-  const allImgs = [
-    ...existingImgUrls.map(url => ({ type: "url", value: url })),
-    ...pendingImgFiles.map((f, i) => ({ type: "pending", value: i, file: f }))
-  ];
-
-  allImgs.forEach((item, i) => {
-    const src = item.type === "url" ? item.value : URL.createObjectURL(item.file);
+  imgUrls.forEach((item, i) => {
+    const src = item._objectUrl || item;
     const isFirst = i === 0;
-    const removeCall = item.type === "url"
-      ? `removeImgSlot(${existingImgUrls.indexOf(item.value)})`
-      : `removePendingSlot(${item.value})`;
-
     html += `
       <div class="img-slot filled">
-        <img src="${escapeHtml(src)}" alt="">
+        <img src="${typeof src === "string" ? escapeHtml(src) : ""}" alt="">
         ${isFirst ? `<span class="img-slot-principal">Principal</span>` : ""}
-        <button class="img-slot-remove" onclick="${removeCall}" title="Remover">&times;</button>
+        <button
+          type="button"
+          class="img-slot-remove"
+          onclick="removeImgSlot(${i})"
+          title="Remover"
+        >&times;</button>
       </div>`;
   });
 
-  for (let i = allImgs.length; i < totalSlots; i++) {
+  // slots vazios
+  const remaining = MAX - imgUrls.length;
+  for (let i = 0; i < remaining; i++) {
     html += `
-      <div class="img-slot empty" onclick="triggerSlotUpload()" title="Adicionar imagem">
+      <div class="img-slot empty" onclick="openSlotPicker()" title="Adicionar imagem">
         <span class="img-slot-plus">+</span>
         <span class="img-slot-label">Adicionar</span>
       </div>`;
@@ -141,39 +146,41 @@ function renderImgSlots() {
   container.innerHTML = html;
 }
 
+function openSlotPicker() {
+  if (imgUrls.length >= 5) return;
+  document.getElementById("product-img-file").click();
+}
+window.openSlotPicker = openSlotPicker;
+
 function removeImgSlot(idx) {
-  existingImgUrls.splice(idx, 1);
+  const item = imgUrls[idx];
+  // revoga object URL se for arquivo pendente
+  if (item && item._objectUrl) {
+    URL.revokeObjectURL(item._objectUrl);
+  }
+  imgUrls.splice(idx, 1);
   renderImgSlots();
 }
 window.removeImgSlot = removeImgSlot;
 
-function removePendingSlot(idx) {
-  pendingImgFiles.splice(idx, 1);
-  renderImgSlots();
-}
-window.removePendingSlot = removePendingSlot;
-
 function handleImgUpload(e) {
-  const files = Array.from(e.target.files);
+  const files = Array.from(e.target.files || []);
+  e.target.value = ""; // reset para permitir selecionar o mesmo arquivo
+
   if (!files.length) return;
 
-  const totalUsed = existingImgUrls.length + pendingImgFiles.length;
-  const slotsLeft = 5 - totalUsed;
+  const slotsLeft = 5 - imgUrls.length;
   const toAdd = files.slice(0, slotsLeft);
 
-  pendingImgFiles = [...pendingImgFiles, ...toAdd];
+  toAdd.forEach(file => {
+    // guarda o File com um objectUrl para preview imediato
+    file._objectUrl = URL.createObjectURL(file);
+    imgUrls.push(file);
+  });
+
   renderImgSlots();
-  e.target.value = "";
 }
 window.handleImgUpload = handleImgUpload;
-
-function triggerSlotUpload() {
-  const totalUsed = existingImgUrls.length + pendingImgFiles.length;
-  if (totalUsed >= 5) return;
-  document.getElementById("product-img-file").click();
-}
-window.triggerSlotUpload = triggerSlotUpload;
-
 
 // ===============================
 // MODAL DE PRODUTO
@@ -183,9 +190,7 @@ function openProductModal(id) {
   const overlay = document.getElementById("product-modal-overlay");
   const form = document.getElementById("product-form");
   form.reset();
-
-  pendingImgFiles = [];
-  existingImgUrls = [];
+  imgUrls = [];
 
   if (id) {
     const product = allProducts.find(p => p.id === id);
@@ -200,7 +205,8 @@ function openProductModal(id) {
     document.getElementById("product-desc").value = product.description || "";
     document.getElementById("product-active").checked = !!product.active;
 
-    existingImgUrls = parseImgs(product.img);
+    // carrega URLs existentes como strings simples
+    imgUrls = parseImgs(product.img);
   } else {
     document.getElementById("product-modal-title").textContent = "Novo Produto";
     document.getElementById("product-id").value = "";
@@ -213,9 +219,12 @@ function openProductModal(id) {
 window.openProductModal = openProductModal;
 
 function closeProductModal() {
+  // revoga object URLs pendentes
+  imgUrls.forEach(item => {
+    if (item && item._objectUrl) URL.revokeObjectURL(item._objectUrl);
+  });
+  imgUrls = [];
   document.getElementById("product-modal-overlay").classList.remove("open");
-  pendingImgFiles = [];
-  existingImgUrls = [];
 }
 window.closeProductModal = closeProductModal;
 
@@ -232,28 +241,32 @@ async function saveProduct(e) {
   const id = document.getElementById("product-id").value;
 
   try {
-    // faz upload de todos os arquivos pendentes
-    let uploadedUrls = [];
-    for (const file of pendingImgFiles) {
-      const url = await uploadImage(file);
-      uploadedUrls.push(url);
+    const finalUrls = [];
+
+    for (const item of imgUrls) {
+      if (item instanceof File) {
+        // arquivo pendente — faz upload agora
+        const url = await uploadImage(item);
+        finalUrls.push(url);
+      } else {
+        // URL já salva — mantém
+        finalUrls.push(item);
+      }
     }
 
-    // combina existentes + novos upados
-    const allImgUrls = [...existingImgUrls, ...uploadedUrls];
-    const imgValue = allImgUrls.length === 0 ? "" :
-                     allImgUrls.length === 1 ? allImgUrls[0] :
-                     JSON.stringify(allImgUrls);
+    const imgValue = finalUrls.length === 0 ? "" :
+                     finalUrls.length === 1 ? finalUrls[0] :
+                     JSON.stringify(finalUrls);
 
     const payload = {
-      name: document.getElementById("product-name").value.trim(),
-      cat: document.getElementById("product-cat").value.trim(),
-      price: parseFloat(document.getElementById("product-price").value) || 0,
+      name:     document.getElementById("product-name").value.trim(),
+      cat:      document.getElementById("product-cat").value.trim(),
+      price:    parseFloat(document.getElementById("product-price").value) || 0,
       oldprice: parseFloat(document.getElementById("product-oldprice").value) || null,
-      img: imgValue,
-      badge: document.getElementById("product-badge").value.trim(),
-      desc: document.getElementById("product-desc").value.trim(),
-      active: document.getElementById("product-active").checked
+      img:      imgValue,
+      badge:    document.getElementById("product-badge").value.trim(),
+      desc:     document.getElementById("product-desc").value.trim(),
+      active:   document.getElementById("product-active").checked
     };
 
     if (id) {
@@ -435,4 +448,3 @@ document.addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   loadHeroBgSetting();
 });
-/* CSS dos slots de imagem — adicione no admin.css */
