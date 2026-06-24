@@ -105,10 +105,9 @@ function renderFeatured() {
 // ===============================
 // SLOTS DE IMAGEM
 // ===============================
-// imgUrls é um array simples de strings:
-// - URLs já salvas no Cloudinary começam com "https://"
-// - Arquivos pendentes são armazenados como objetos File com uma
-//   propriedade _objectUrl temporária para preview
+// imgUrls é um array misto:
+//   - string  → URL já salva no Cloudinary
+//   - object  → { file: File, preview: objectURL } ainda não upado
 
 function renderImgSlots() {
   const container = document.getElementById("img-slots-container");
@@ -118,26 +117,20 @@ function renderImgSlots() {
   let html = "";
 
   imgUrls.forEach((item, i) => {
-    const src = item._objectUrl || item;
+    const src = typeof item === "string" ? item : item.preview;
     const isFirst = i === 0;
     html += `
       <div class="img-slot filled">
-        <img src="${typeof src === "string" ? escapeHtml(src) : ""}" alt="">
+        <img src="${escapeHtml(src)}" alt="">
         ${isFirst ? `<span class="img-slot-principal">Principal</span>` : ""}
-        <button
-          type="button"
-          class="img-slot-remove"
-          onclick="removeImgSlot(${i})"
-          title="Remover"
-        >&times;</button>
+        <button type="button" class="img-slot-remove" onclick="removeImgSlot(${i})" title="Remover">&times;</button>
       </div>`;
   });
 
-  // slots vazios
   const remaining = MAX - imgUrls.length;
   for (let i = 0; i < remaining; i++) {
     html += `
-      <div class="img-slot empty" onclick="openSlotPicker()" title="Adicionar imagem">
+      <div class="img-slot empty" onclick="openSlotPicker(event)" title="Adicionar imagem">
         <span class="img-slot-plus">+</span>
         <span class="img-slot-label">Adicionar</span>
       </div>`;
@@ -146,17 +139,22 @@ function renderImgSlots() {
   container.innerHTML = html;
 }
 
-function openSlotPicker() {
+function openSlotPicker(e) {
+  if (e) e.stopPropagation(); // impede propagação que fecharia o modal
   if (imgUrls.length >= 5) return;
-  document.getElementById("product-img-file").click();
+  const input = document.getElementById("product-img-file");
+  // clona e substitui para garantir que o change sempre dispara
+  const newInput = input.cloneNode(true);
+  newInput.onchange = handleImgUpload;
+  input.parentNode.replaceChild(newInput, input);
+  newInput.click();
 }
 window.openSlotPicker = openSlotPicker;
 
 function removeImgSlot(idx) {
   const item = imgUrls[idx];
-  // revoga object URL se for arquivo pendente
-  if (item && item._objectUrl) {
-    URL.revokeObjectURL(item._objectUrl);
+  if (item && typeof item === "object" && item.preview) {
+    URL.revokeObjectURL(item.preview);
   }
   imgUrls.splice(idx, 1);
   renderImgSlots();
@@ -165,17 +163,11 @@ window.removeImgSlot = removeImgSlot;
 
 function handleImgUpload(e) {
   const files = Array.from(e.target.files || []);
-  e.target.value = ""; // reset para permitir selecionar o mesmo arquivo
-
   if (!files.length) return;
 
   const slotsLeft = 5 - imgUrls.length;
-  const toAdd = files.slice(0, slotsLeft);
-
-  toAdd.forEach(file => {
-    // guarda o File com um objectUrl para preview imediato
-    file._objectUrl = URL.createObjectURL(file);
-    imgUrls.push(file);
+  files.slice(0, slotsLeft).forEach(file => {
+    imgUrls.push({ file, preview: URL.createObjectURL(file) });
   });
 
   renderImgSlots();
@@ -244,12 +236,11 @@ async function saveProduct(e) {
     const finalUrls = [];
 
     for (const item of imgUrls) {
-      if (item instanceof File) {
-        // arquivo pendente — faz upload agora
-        const url = await uploadImage(item);
+      if (typeof item === "object" && item.file) {
+        const url = await uploadImage(item.file);
+        if (item.preview) URL.revokeObjectURL(item.preview);
         finalUrls.push(url);
       } else {
-        // URL já salva — mantém
         finalUrls.push(item);
       }
     }
