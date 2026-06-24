@@ -140,16 +140,10 @@ function renderImgSlots() {
 }
 
 function openSlotPicker(e) {
-  if (e) e.stopPropagation(); // impede propagação que fecharia o modal
+  if (e) e.stopPropagation();
   if (imgUrls.length >= 5) return;
-  const input = document.getElementById("product-img-file");
-  // clona e substitui para garantir que o change sempre dispara
-  const newInput = input.cloneNode(true);
-  newInput.onchange = handleImgUpload;
-  input.parentNode.replaceChild(newInput, input);
-  newInput.click();
+  document.getElementById("product-img-file").click();
 }
-window.openSlotPicker = openSlotPicker;
 
 function removeImgSlot(idx) {
   const item = imgUrls[idx];
@@ -206,6 +200,8 @@ function openProductModal(id) {
   }
 
   renderImgSlots();
+  const fileInput = document.getElementById("product-img-file");
+  fileInput.onchange = handleImgUpload;
   overlay.classList.add("open");
 }
 window.openProductModal = openProductModal;
