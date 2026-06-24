@@ -1,6 +1,6 @@
-
 let allProducts = [];
-let pendingImgFile = null;
+let pendingImgFiles = []; // array de Files pendentes
+let existingImgUrls = []; // array de URLs já salvas
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!localStorage.getItem("token")) {
@@ -38,24 +38,34 @@ function renderStats() {
   const active = allProducts.filter(p => p.active).length;
   const categories = new Set(allProducts.map(p => p.cat).filter(Boolean)).size;
   const withPhoto = allProducts.filter(p => p.img && p.img.trim() !== "").length;
-
   document.getElementById("stat-total").textContent = total;
   document.getElementById("stat-active").textContent = active;
   document.getElementById("stat-categories").textContent = categories;
   document.getElementById("stat-with-photo").textContent = withPhoto;
 }
 
+function parseImgs(raw) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.filter(Boolean);
+  } catch(_) {}
+  if (typeof raw === "string" && raw.trim()) return [raw];
+  return [];
+}
+
 function renderTable() {
   const tbody = document.getElementById("products-table");
-
   if (allProducts.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" class="empty-row">Nenhum produto cadastrado.</td></tr>`;
     return;
   }
-
-  tbody.innerHTML = allProducts.map(p => `
+  tbody.innerHTML = allProducts.map(p => {
+    const imgs = parseImgs(p.img);
+    const thumb = imgs[0] || "";
+    return `
     <tr>
-      <td><img class="prod-img" src="${escapeHtml(p.img || './assets/images/logo.png')}" alt=""></td>
+      <td><img class="prod-img" src="${escapeHtml(thumb || './assets/images/logo.png')}" alt=""></td>
       <td class="prod-name">${escapeHtml(p.name)}</td>
       <td><span class="cat-badge">${escapeHtml(p.cat || "Sem categoria")}</span></td>
       <td class="price-current">R$ ${formatPrice(p.price)}</td>
@@ -65,61 +75,113 @@ function renderTable() {
         <button class="btn-edit" onclick="openProductModal(${p.id})">Editar</button>
         <button class="btn-delete" onclick="removeProduct(${p.id})">🗑</button>
       </td>
-    </tr>
-  `).join("");
+    </tr>`;
+  }).join("");
 }
 
 function renderFeatured() {
   const box = document.getElementById("featured-box");
   const featured = allProducts.find(p => Number(p.featured) === 1);
-
   if (!featured) {
     box.innerHTML = `<span class="empty-text">Nenhum produto em destaque</span>`;
     return;
   }
-
+  const imgs = parseImgs(featured.img);
+  const thumb = imgs[0] || "./assets/images/logo.png";
   box.innerHTML = `
     <div class="featured-product">
-      <img src="${escapeHtml(featured.img || './assets/images/logo.png')}" alt="">
+      <img src="${escapeHtml(thumb)}" alt="">
       <div>
         <div class="fp-name">${escapeHtml(featured.name)}</div>
         <div class="fp-cat">${escapeHtml(featured.cat || "Sem categoria")}</div>
       </div>
       <div class="fp-price">R$ ${formatPrice(featured.price)}</div>
-    </div>
-  `;
+    </div>`;
 }
+
+// ===============================
+// GALERIA DE IMAGENS — SLOTS
+// ===============================
+
+function renderImgSlots() {
+  const container = document.getElementById("img-slots-container");
+  if (!container) return;
+
+  const totalSlots = 5;
+  let html = "";
+
+  // slots com imagens existentes
+  existingImgUrls.forEach((url, i) => {
+    html += `
+      <div class="img-slot filled" data-idx="${i}">
+        <img src="${escapeHtml(url)}" alt="">
+        ${i === 0 ? `<span class="img-slot-principal">Principal</span>` : ""}
+        <button class="img-slot-remove" onclick="removeImgSlot(${i})" title="Remover">&times;</button>
+      </div>`;
+  });
+
+  // slots com arquivos pendentes (ainda não upados)
+  pendingImgFiles.forEach((f, i) => {
+    const objUrl = URL.createObjectURL(f);
+    const isFirst = existingImgUrls.length === 0 && i === 0;
+    html += `
+      <div class="img-slot filled pending" data-pending="${i}">
+        <img src="${objUrl}" alt="">
+        ${isFirst ? `<span class="img-slot-principal">Principal</span>` : ""}
+        <button class="img-slot-remove" onclick="removePendingSlot(${i})" title="Remover">&times;</button>
+      </div>`;
+  });
+
+  // slots vazios (para adicionar)
+  const usedSlots = existingImgUrls.length + pendingImgFiles.length;
+  for (let i = usedSlots; i < totalSlots; i++) {
+    html += `
+      <div class="img-slot empty" onclick="document.getElementById('product-img-file').click()" title="Adicionar imagem">
+        <span class="img-slot-plus">+</span>
+        <span class="img-slot-label">Adicionar</span>
+      </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function removeImgSlot(idx) {
+  existingImgUrls.splice(idx, 1);
+  renderImgSlots();
+}
+window.removeImgSlot = removeImgSlot;
+
+function removePendingSlot(idx) {
+  pendingImgFiles.splice(idx, 1);
+  renderImgSlots();
+}
+window.removePendingSlot = removePendingSlot;
 
 function handleImgUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
 
-  pendingImgFile = file;
+  const totalUsed = existingImgUrls.length + pendingImgFiles.length;
+  const slotsLeft = 5 - totalUsed;
+  const toAdd = files.slice(0, slotsLeft);
 
-  const preview = document.getElementById("product-img-preview");
-  const label = document.getElementById("product-img-label");
-  const reader = new FileReader();
-  reader.onload = ev => {
-    preview.src = ev.target.result;
-    preview.style.display = "block";
-    label.textContent = file.name;
-  };
-  reader.readAsDataURL(file);
+  pendingImgFiles = [...pendingImgFiles, ...toAdd];
+  renderImgSlots();
+  e.target.value = ""; // permite selecionar o mesmo arquivo de novo
 }
 window.handleImgUpload = handleImgUpload;
+
+// ===============================
+// MODAL DE PRODUTO
+// ===============================
 
 function openProductModal(id) {
   const overlay = document.getElementById("product-modal-overlay");
   const form = document.getElementById("product-form");
   form.reset();
-  pendingImgFile = null;
 
-  const preview = document.getElementById("product-img-preview");
-  const label = document.getElementById("product-img-label");
-  preview.style.display = "none";
-  preview.src = "";
-  label.textContent = "Clique para selecionar uma imagem";
-  document.getElementById("product-img").value = "";
+  pendingImgFiles = [];
+  existingImgUrls = [];
 
   if (id) {
     const product = allProducts.find(p => p.id === id);
@@ -130,35 +192,35 @@ function openProductModal(id) {
     document.getElementById("product-cat").value = product.cat || "";
     document.getElementById("product-price").value = product.price ?? "";
     document.getElementById("product-oldprice").value = product.oldprice ?? "";
-    document.getElementById("product-img").value = product.img || "";
     document.getElementById("product-badge").value = product.badge || "";
     document.getElementById("product-desc").value = product.description || "";
     document.getElementById("product-active").checked = !!product.active;
 
-    if (product.img) {
-      preview.src = product.img;
-      preview.style.display = "block";
-      label.textContent = "Imagem atual (selecione outra para trocar)";
-    }
+    existingImgUrls = parseImgs(product.img);
   } else {
     document.getElementById("product-modal-title").textContent = "Novo Produto";
     document.getElementById("product-id").value = "";
     document.getElementById("product-active").checked = true;
   }
 
+  renderImgSlots();
   overlay.classList.add("open");
 }
 window.openProductModal = openProductModal;
 
 function closeProductModal() {
   document.getElementById("product-modal-overlay").classList.remove("open");
-  pendingImgFile = null;
+  pendingImgFiles = [];
+  existingImgUrls = [];
 }
 window.closeProductModal = closeProductModal;
 
+// ===============================
+// SALVAR PRODUTO
+// ===============================
+
 async function saveProduct(e) {
   e.preventDefault();
-
   const submitBtn = e.target.querySelector("button[type=submit]");
   submitBtn.textContent = "Salvando...";
   submitBtn.disabled = true;
@@ -166,17 +228,25 @@ async function saveProduct(e) {
   const id = document.getElementById("product-id").value;
 
   try {
-    let imgUrl = document.getElementById("product-img").value;
-    if (pendingImgFile) {
-      imgUrl = await uploadImage(pendingImgFile);
+    // faz upload de todos os arquivos pendentes
+    let uploadedUrls = [];
+    for (const file of pendingImgFiles) {
+      const url = await uploadImage(file);
+      uploadedUrls.push(url);
     }
+
+    // combina existentes + novos upados
+    const allImgUrls = [...existingImgUrls, ...uploadedUrls];
+    const imgValue = allImgUrls.length === 0 ? "" :
+                     allImgUrls.length === 1 ? allImgUrls[0] :
+                     JSON.stringify(allImgUrls);
 
     const payload = {
       name: document.getElementById("product-name").value.trim(),
       cat: document.getElementById("product-cat").value.trim(),
       price: parseFloat(document.getElementById("product-price").value) || 0,
       oldprice: parseFloat(document.getElementById("product-oldprice").value) || null,
-      img: imgUrl,
+      img: imgValue,
       badge: document.getElementById("product-badge").value.trim(),
       desc: document.getElementById("product-desc").value.trim(),
       active: document.getElementById("product-active").checked
@@ -214,6 +284,10 @@ async function removeProduct(id) {
 }
 window.removeProduct = removeProduct;
 
+// ===============================
+// DESTAQUE
+// ===============================
+
 function openFeaturedModal() {
   const overlay = document.getElementById("featured-modal-overlay");
   const container = document.getElementById("featured-options");
@@ -221,15 +295,18 @@ function openFeaturedModal() {
   if (allProducts.length === 0) {
     container.innerHTML = `<p class="empty-row">Nenhum produto cadastrado.</p>`;
   } else {
-    container.innerHTML = allProducts.map(p => `
-      <button class="featured-option ${Number(p.featured) === 1 ? "is-current" : ""}" onclick="chooseFeatured(${p.id})">
-        <img src="${escapeHtml(p.img || './assets/images/logo.png')}" alt="">
-        <div>
-          <div class="fp-name">${escapeHtml(p.name)}</div>
-          <div class="fp-cat">${escapeHtml(p.cat || "Sem categoria")}</div>
-        </div>
-      </button>
-    `).join("");
+    container.innerHTML = allProducts.map(p => {
+      const imgs = parseImgs(p.img);
+      const thumb = imgs[0] || "./assets/images/logo.png";
+      return `
+        <button class="featured-option ${Number(p.featured) === 1 ? "is-current" : ""}" onclick="chooseFeatured(${p.id})">
+          <img src="${escapeHtml(thumb)}" alt="">
+          <div>
+            <div class="fp-name">${escapeHtml(p.name)}</div>
+            <div class="fp-cat">${escapeHtml(p.cat || "Sem categoria")}</div>
+          </div>
+        </button>`;
+    }).join("");
   }
 
   overlay.classList.add("open");
@@ -253,6 +330,86 @@ async function chooseFeatured(id) {
 }
 window.chooseFeatured = chooseFeatured;
 
+// ===============================
+// CONFIGURAÇÕES — HERO BG
+// ===============================
+
+async function loadHeroBgSetting() {
+  try {
+    const url = await getSetting("hero_bg");
+    const box = document.getElementById("hero-bg-preview-box");
+    const btnRemove = document.getElementById("btn-remove-bg");
+    if (!box) return;
+    if (url && url.trim() !== "") {
+      box.outerHTML = `<img id="hero-bg-preview-box" class="hero-bg-preview" src="${url}" alt="Fundo atual">`;
+      if (btnRemove) btnRemove.style.display = "inline-flex";
+    } else {
+      if (btnRemove) btnRemove.style.display = "none";
+    }
+  } catch(e) {
+    console.log("Sem configuração de fundo salva.");
+  }
+}
+
+async function handleHeroBgUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const btn = document.querySelector(".settings-section .btn-primary");
+  btn.textContent = "Fazendo upload...";
+  btn.disabled = true;
+  try {
+    const url = await uploadImage(file);
+    await updateSetting("hero_bg", url);
+    const box = document.getElementById("hero-bg-preview-box");
+    if (box) {
+      const img = document.createElement("img");
+      img.id = "hero-bg-preview-box";
+      img.className = "hero-bg-preview";
+      img.src = url;
+      img.alt = "Fundo atual";
+      box.replaceWith(img);
+    }
+    const btnRemove = document.getElementById("btn-remove-bg");
+    if (btnRemove) btnRemove.style.display = "inline-flex";
+    alert("Fundo atualizado com sucesso!");
+  } catch(err) {
+    console.error(err);
+    alert("Erro ao fazer upload: " + err.message);
+  } finally {
+    btn.textContent = "Upload de imagem";
+    btn.disabled = false;
+    e.target.value = "";
+  }
+}
+
+async function removeHeroBg() {
+  if (!confirm("Remover a imagem de fundo e voltar ao grid padrão?")) return;
+  try {
+    await updateSetting("hero_bg", "");
+    const box = document.getElementById("hero-bg-preview-box");
+    if (box) {
+      const div = document.createElement("div");
+      div.id = "hero-bg-preview-box";
+      div.className = "hero-bg-default";
+      div.textContent = "Grid padrão (default)";
+      box.replaceWith(div);
+    }
+    const btnRemove = document.getElementById("btn-remove-bg");
+    if (btnRemove) btnRemove.style.display = "none";
+    alert("Fundo removido. O site voltará ao grid padrão.");
+  } catch(err) {
+    console.error(err);
+    alert("Erro ao remover fundo: " + err.message);
+  }
+}
+
+window.handleHeroBgUpload = handleHeroBgUpload;
+window.removeHeroBg = removeHeroBg;
+
+// ===============================
+// UTILS
+// ===============================
+
 function formatPrice(value) {
   return Number(value || 0).toFixed(2).replace(".", ",");
 }
@@ -270,90 +427,8 @@ document.addEventListener("click", (e) => {
     e.target.classList.remove("open");
   }
 });
- 
-async function loadHeroBgSetting() {
-  try {
-    const url = await getSetting("hero_bg");
-    const box = document.getElementById("hero-bg-preview-box");
-    const btnRemove = document.getElementById("btn-remove-bg");
-    if (!box) return;
- 
-    if (url && url.trim() !== "") {
-      box.outerHTML = `<img id="hero-bg-preview-box" class="hero-bg-preview" src="${url}" alt="Fundo atual">`;
-      if (btnRemove) btnRemove.style.display = "inline-flex";
-    } else {
-      if (btnRemove) btnRemove.style.display = "none";
-    }
-  } catch(e) {
-    console.log("Sem configuração de fundo salva.");
-  }
-}
- 
-async function handleHeroBgUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
- 
-  const btn = document.querySelector(".settings-section .btn-primary");
-  btn.textContent = "Fazendo upload...";
-  btn.disabled = true;
- 
-  try {
-    const url = await uploadImage(file);
-    await updateSetting("hero_bg", url);
- 
-    // atualiza preview
-    const box = document.getElementById("hero-bg-preview-box");
-    if (box) {
-      const img = document.createElement("img");
-      img.id = "hero-bg-preview-box";
-      img.className = "hero-bg-preview";
-      img.src = url;
-      img.alt = "Fundo atual";
-      box.replaceWith(img);
-    }
- 
-    const btnRemove = document.getElementById("btn-remove-bg");
-    if (btnRemove) btnRemove.style.display = "inline-flex";
- 
-    alert("Fundo atualizado com sucesso!");
-  } catch(err) {
-    console.error(err);
-    alert("Erro ao fazer upload: " + err.message);
-  } finally {
-    btn.textContent = "Upload de imagem";
-    btn.disabled = false;
-    e.target.value = "";
-  }
-}
- 
-async function removeHeroBg() {
-  if (!confirm("Remover a imagem de fundo e voltar ao grid padrão?")) return;
-  try {
-    await updateSetting("hero_bg", "");
- 
-    // volta pro placeholder
-    const box = document.getElementById("hero-bg-preview-box");
-    if (box) {
-      const div = document.createElement("div");
-      div.id = "hero-bg-preview-box";
-      div.className = "hero-bg-default";
-      div.textContent = "Grid padrão (default)";
-      box.replaceWith(div);
-    }
- 
-    const btnRemove = document.getElementById("btn-remove-bg");
-    if (btnRemove) btnRemove.style.display = "none";
- 
-    alert("Fundo removido. O site voltará ao grid padrão.");
-  } catch(err) {
-    console.error(err);
-    alert("Erro ao remover fundo: " + err.message);
-  }
-}
- 
-window.handleHeroBgUpload = handleHeroBgUpload;
-window.removeHeroBg = removeHeroBg;
 
 document.addEventListener("DOMContentLoaded", () => {
   loadHeroBgSetting();
 });
+/* CSS dos slots de imagem — adicione no admin.css */
