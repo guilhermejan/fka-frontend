@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://fka-backend.onrender.com/api";
 
 const CLOUDINARY_CLOUD_NAME = "dk98eyikn";
 const CLOUDINARY_UPLOAD_PRESET = "fka_unsigned";
