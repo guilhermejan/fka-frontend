@@ -163,9 +163,17 @@ function handleImgUpload(e) {
 
   pendingImgFiles = [...pendingImgFiles, ...toAdd];
   renderImgSlots();
-  e.target.value = ""; // permite selecionar o mesmo arquivo de novo
+  e.target.value = "";
 }
 window.handleImgUpload = handleImgUpload;
+
+function triggerSlotUpload() {
+  const totalUsed = existingImgUrls.length + pendingImgFiles.length;
+  if (totalUsed >= 5) return;
+  document.getElementById("product-img-file").click();
+}
+window.triggerSlotUpload = triggerSlotUpload;
+
 
 // ===============================
 // MODAL DE PRODUTO
