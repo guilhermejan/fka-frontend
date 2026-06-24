@@ -1,7 +1,6 @@
-// URL do backend em produção
-const API_URL = "https://fka-backend.onrender.com/api";
 
-// Cloud name do Cloudinary
+const API_URL = "http://localhost:3000/api";
+
 const CLOUDINARY_CLOUD_NAME = "dk98eyikn";
 const CLOUDINARY_UPLOAD_PRESET = "fka_unsigned";
 
@@ -13,9 +12,6 @@ function authHeaders() {
   };
 }
 
-// ===============================
-// UPLOAD DE IMAGEM (Cloudinary)
-// ===============================
 async function uploadImage(file) {
   const formData = new FormData();
   formData.append("file", file);
@@ -32,18 +28,12 @@ async function uploadImage(file) {
 }
 window.uploadImage = uploadImage;
 
-// ===============================
-// PEGAR PRODUTOS
-// ===============================
 async function getProducts() {
   const response = await fetch(`${API_URL}/products`);
   if (!response.ok) throw new Error("Falha ao buscar produtos");
   return await response.json();
 }
 
-// ===============================
-// CRIAR PRODUTO
-// ===============================
 async function createProduct(product) {
   const response = await fetch(`${API_URL}/products`, {
     method: "POST",
@@ -54,9 +44,6 @@ async function createProduct(product) {
   return await response.json();
 }
 
-// ===============================
-// ATUALIZAR PRODUTO
-// ===============================
 async function updateProduct(id, product) {
   const response = await fetch(`${API_URL}/products/${id}`, {
     method: "PUT",
@@ -67,9 +54,6 @@ async function updateProduct(id, product) {
   return await response.json();
 }
 
-// ===============================
-// DELETAR PRODUTO
-// ===============================
 async function deleteProduct(id) {
   const response = await fetch(`${API_URL}/products/${id}`, {
     method: "DELETE",
@@ -79,9 +63,6 @@ async function deleteProduct(id) {
   return await response.json();
 }
 
-// ===============================
-// DEFINIR PRODUTO EM DESTAQUE
-// ===============================
 async function setFeatured(productId, allProducts) {
   const updates = allProducts.map(p => {
     const payload = { ...p, featured: p.id === productId ? 1 : 0 };
@@ -90,9 +71,6 @@ async function setFeatured(productId, allProducts) {
   return Promise.all(updates);
 }
 
-// ===============================
-// SETTINGS
-// ===============================
 async function getSetting(key) {
   const response = await fetch(`${API_URL}/settings/${key}`);
   if (!response.ok) return "";

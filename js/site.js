@@ -1,10 +1,18 @@
 let products = [];
 let nextId = 1;
 
-// ─── CONFIG ───
-const WHATSAPP_LINK = "https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_t";
+const WHATSAPP_LINK = "https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD";
 
-// ─── CAROUSEL DRAG ───
+function parseImgs(raw) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed.filter(Boolean);
+  } catch(_) {}
+  if (typeof raw === "string" && raw.trim()) return [raw];
+  return [];
+}
+
 (function(){
   let track, isDragging=false, startX=0, scrollLeft=0, dragMoved=false;
   document.addEventListener("DOMContentLoaded",()=>{
@@ -32,17 +40,50 @@ const WHATSAPP_LINK = "https://chat.whatsapp.com/BVZANfpNxez9OgorcpWhYy?mode=gi_
   });
 })();
 
-// ─── MODAL DE PRODUTO ───
+let _galleryImgs = [];
+let _galleryIdx  = 0;
+
+function _renderGalleryImg() {
+  const wrap = document.getElementById("prod-gallery-wrap");
+  if (!wrap) return;
+  const url   = _galleryImgs[_galleryIdx];
+  const total = _galleryImgs.length;
+
+  wrap.innerHTML = url
+    ? `<img class="prod-modal-img" src="${url}" alt="">
+       ${total > 1 ? `
+         <button class="prod-gallery-btn prod-gallery-prev" onclick="prodGalleryNav(-1)">&#8249;</button>
+         <button class="prod-gallery-btn prod-gallery-next" onclick="prodGalleryNav(1)">&#8250;</button>
+         <div class="prod-gallery-dots">
+           ${_galleryImgs.map((_,i) =>
+             `<button class="prod-gallery-dot${i===_galleryIdx?' active':''}" onclick="prodGalleryGo(${i})"></button>`
+           ).join("")}
+         </div>` : ""}
+      `
+    : `<div class="prod-modal-img-placeholder">Imagem não disponível</div>`;
+}
+
+function prodGalleryNav(dir) {
+  _galleryIdx = (_galleryIdx + dir + _galleryImgs.length) % _galleryImgs.length;
+  _renderGalleryImg();
+}
+function prodGalleryGo(i) {
+  _galleryIdx = i;
+  _renderGalleryImg();
+}
+window.prodGalleryNav = prodGalleryNav;
+window.prodGalleryGo  = prodGalleryGo;
+
 function openProdModal(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
 
+  _galleryImgs = parseImgs(p.img);
+  _galleryIdx  = 0;
+
   const content = document.getElementById("prod-modal-content");
   content.innerHTML = `
-    ${p.img
-      ? `<img class="prod-modal-img" src="${p.img}" alt="${p.name}">`
-      : `<div class="prod-modal-img-placeholder">Imagem não disponível</div>`
-    }
+    <div id="prod-gallery-wrap" class="prod-gallery-wrap"></div>
     <div class="prod-modal-body">
       <div class="prod-modal-top">
         <div>
@@ -62,6 +103,8 @@ function openProdModal(id) {
       </a>
     </div>
   `;
+
+  _renderGalleryImg();
 
   const overlay = document.getElementById("prod-modal-overlay");
   overlay.style.display = "flex";
@@ -92,7 +135,6 @@ document.addEventListener("keydown", e => {
   }
 });
 
-// ─── RENDER CAROUSEL ───
 function renderCarousel(){
   const track = document.getElementById("carousel-track");
   if(!track) return;
@@ -101,11 +143,14 @@ function renderCarousel(){
     track.innerHTML = `<div style="padding:40px;color:#444;font-size:13px;text-align:center;width:100%">Nenhum produto ativo no momento.</div>`;
     return;
   }
-  track.innerHTML = active.map(p=>`
+  track.innerHTML = active.map(p=>{
+    const imgs = parseImgs(p.img);
+    const thumb = imgs[0] || "";
+    return `
     <div class="prod-card" onclick="handleCardClick(event,${p.id})">
       ${p.badge ? `<span class="prod-badge-new">${p.badge}</span>` : ""}
-      ${p.img
-        ? `<img class="prod-card-img" src="${p.img}" alt="${p.name}" draggable="false">`
+      ${thumb
+        ? `<img class="prod-card-img" src="${thumb}" alt="${p.name}" draggable="false">`
         : `<div class="prod-card-img-placeholder"><span>Imagem não disponível</span></div>`
       }
       <div class="prod-card-body">
@@ -120,8 +165,8 @@ function renderCarousel(){
           <i class="ti ti-brand-whatsapp" style="font-size:14px"></i> Pedir pelo WhatsApp
         </button>
       </div>
-    </div>
-  `).join("");
+    </div>`;
+  }).join("");
 }
 
 function handleCardClick(e, id) {
@@ -130,7 +175,6 @@ function handleCardClick(e, id) {
 }
 window.handleCardClick = handleCardClick;
 
-// ─── FEATURED PRODUCT ───
 function renderFeaturedSection(){
   const section = document.getElementById("featured-section");
   const inner = document.getElementById("feat-inner");
@@ -139,14 +183,17 @@ function renderFeaturedSection(){
 
   let p = products.find(x => Number(x.featured) === 1 && x.active);
   if(!p) p = products.find(x => x.active);
-
   if(!p){ section.style.display="none"; return; }
+
   section.style.display="block";
   title.textContent = p.name;
 
+  const imgs = parseImgs(p.img);
+  const thumb = imgs[0] || "";
+
   inner.innerHTML = `
-    ${p.img
-      ? `<img src="${p.img}" alt="${p.name}" class="feat-prod-img">`
+    ${thumb
+      ? `<img src="${thumb}" alt="${p.name}" class="feat-prod-img">`
       : `<div class="feat-prod-placeholder">Imagem não disponível</div>`
     }
     <div class="featured-text">
@@ -167,7 +214,6 @@ function renderFeaturedSection(){
   `;
 }
 
-// ─── HERO BACKGROUND ───
 async function applyHeroBg() {
   try {
     const url = await getSetting("hero_bg");
@@ -177,13 +223,11 @@ async function applyHeroBg() {
       hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('${url}')`;
       hero.style.backgroundSize = "cover";
       hero.style.backgroundPosition = "center";
-      // esconde o grid quadriculado
       const grid = hero.querySelector(".hero-grid");
       const glow = hero.querySelector(".hero-glow");
       if (grid) grid.style.display = "none";
       if (glow) glow.style.display = "none";
     } else {
-      // volta pro default
       hero.style.backgroundImage = "";
       hero.style.backgroundSize = "";
       hero.style.backgroundPosition = "";
@@ -193,7 +237,6 @@ async function applyHeroBg() {
       if (glow) glow.style.display = "";
     }
   } catch(e) {
-    console.log("Sem configuração de fundo:", e);
   }
 }
 

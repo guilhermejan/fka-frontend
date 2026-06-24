@@ -1,6 +1,4 @@
-// ===============================
-// ESTADO
-// ===============================
+
 let allProducts = [];
 let pendingImgFile = null;
 
@@ -14,18 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("submit", saveProduct);
 });
 
-// ===============================
-// LOGOUT
-// ===============================
 function logout() {
   localStorage.removeItem("token");
   window.location.href = "./acesso.html";
 }
 window.logout = logout;
 
-// ===============================
-// CARREGAR PRODUTOS
-// ===============================
 async function loadProducts() {
   const tbody = document.getElementById("products-table");
   try {
@@ -41,9 +33,6 @@ async function loadProducts() {
 }
 window.loadProducts = loadProducts;
 
-// ===============================
-// STATS
-// ===============================
 function renderStats() {
   const total = allProducts.length;
   const active = allProducts.filter(p => p.active).length;
@@ -56,9 +45,6 @@ function renderStats() {
   document.getElementById("stat-with-photo").textContent = withPhoto;
 }
 
-// ===============================
-// TABELA
-// ===============================
 function renderTable() {
   const tbody = document.getElementById("products-table");
 
@@ -83,9 +69,6 @@ function renderTable() {
   `).join("");
 }
 
-// ===============================
-// DESTAQUE
-// ===============================
 function renderFeatured() {
   const box = document.getElementById("featured-box");
   const featured = allProducts.find(p => Number(p.featured) === 1);
@@ -107,9 +90,6 @@ function renderFeatured() {
   `;
 }
 
-// ===============================
-// UPLOAD DE IMAGEM
-// ===============================
 function handleImgUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -128,9 +108,6 @@ function handleImgUpload(e) {
 }
 window.handleImgUpload = handleImgUpload;
 
-// ===============================
-// MODAL PRODUTO
-// ===============================
 function openProductModal(id) {
   const overlay = document.getElementById("product-modal-overlay");
   const form = document.getElementById("product-form");
@@ -158,7 +135,6 @@ function openProductModal(id) {
     document.getElementById("product-desc").value = product.description || "";
     document.getElementById("product-active").checked = !!product.active;
 
-    // Mostra imagem atual se existir
     if (product.img) {
       preview.src = product.img;
       preview.style.display = "block";
@@ -190,7 +166,6 @@ async function saveProduct(e) {
   const id = document.getElementById("product-id").value;
 
   try {
-    // Se tem arquivo novo pendente, faz upload pro Cloudinary primeiro
     let imgUrl = document.getElementById("product-img").value;
     if (pendingImgFile) {
       imgUrl = await uploadImage(pendingImgFile);
@@ -227,9 +202,6 @@ async function saveProduct(e) {
   }
 }
 
-// ===============================
-// EXCLUIR
-// ===============================
 async function removeProduct(id) {
   if (!confirm("Excluir este produto?")) return;
   try {
@@ -242,9 +214,6 @@ async function removeProduct(id) {
 }
 window.removeProduct = removeProduct;
 
-// ===============================
-// MODAL DESTAQUE
-// ===============================
 function openFeaturedModal() {
   const overlay = document.getElementById("featured-modal-overlay");
   const container = document.getElementById("featured-options");
@@ -284,9 +253,6 @@ async function chooseFeatured(id) {
 }
 window.chooseFeatured = chooseFeatured;
 
-// ===============================
-// HELPERS
-// ===============================
 function formatPrice(value) {
   return Number(value || 0).toFixed(2).replace(".", ",");
 }
@@ -304,11 +270,6 @@ document.addEventListener("click", (e) => {
     e.target.classList.remove("open");
   }
 });
-
-// ===============================
-// CONFIGURAÇÕES — HERO BACKGROUND
-// Cole no final do admin.js
-// ===============================
  
 async function loadHeroBgSetting() {
   try {
@@ -392,8 +353,7 @@ async function removeHeroBg() {
  
 window.handleHeroBgUpload = handleHeroBgUpload;
 window.removeHeroBg = removeHeroBg;
- 
-// Carrega a configuração ao abrir o painel
+
 document.addEventListener("DOMContentLoaded", () => {
   loadHeroBgSetting();
 });
