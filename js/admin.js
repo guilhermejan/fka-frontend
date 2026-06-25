@@ -140,10 +140,16 @@ function renderImgSlots() {
 }
 
 function openSlotPicker(e) {
-  if (e) e.stopPropagation();
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
   if (imgUrls.length >= 5) return;
-  document.getElementById("product-img-file").click();
+  const input = document.getElementById("product-img-file");
+  input.value = "";
+  input.click();
 }
+window.openSlotPicker = openSlotPicker;
 
 function removeImgSlot(idx) {
   const item = imgUrls[idx];
@@ -435,5 +441,3 @@ document.addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   loadHeroBgSetting();
 });
-
-window.openSlotPicker = openSlotPicker;
