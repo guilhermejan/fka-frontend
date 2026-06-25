@@ -435,3 +435,5 @@ document.addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   loadHeroBgSetting();
 });
+
+window.openSlotPicker = openSlotPicker;
