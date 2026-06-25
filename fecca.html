@@ -111,13 +111,20 @@
         </label>
       </div>
 
-    <div>
-      <span class="img-slots-label">Imagens (até 5 — a 1ª é a principal)</span>
-      <div id="img-slots-container"></div>
-      <p class="img-slots-hint">Clique num slot vazio para adicionar. Passe o mouse numa imagem para remover.</p>
-      <input type="file" id="product-img-file" accept="image/*" style="display:none" multiple>
-      <input type="hidden" id="product-img">
-    </div>
+      <div class="img-upload-section">
+        <span class="img-upload-label">
+          Imagens (até 5 — a 1ª é a principal)
+          <span class="img-counter" id="img-counter">0/5 imagens</span>
+        </span>
+        <div id="img-dropzone">
+          <span class="dropzone-icon">📁</span>
+          <span class="dropzone-text">Arraste imagens aqui</span>
+          <span class="dropzone-sub">ou clique para selecionar</span>
+        </div>
+        <div id="img-previews"></div>
+        <input type="file" id="product-img-file" accept="image/*" style="display:none" multiple>
+        <input type="hidden" id="product-img">
+      </div>
 
       <label>Selo / Badges
         <input type="text" id="product-badge" placeholder="Ex: Promoção">
