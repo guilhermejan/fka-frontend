@@ -19,6 +19,19 @@ function formatDesc(text) {
     .split("\n")
     .map(line => line.trim())
     .filter(Boolean)
+    .map(line => line.startsWith("*")
+      ? `<span style="display:block;padding-left:12px;position:relative"><span style="position:absolute;left:0;color:var(--gold)">›</span>${line.slice(1).trim()}</span>`
+      : `<span style="display:block">${line}</span>`
+    )
+    .join("");
+}
+
+function formatDesc(text) {
+  if (!text) return "";
+  return text
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
     .map(line => line.startsWith("*") 
       ? `<span style="display:block;padding-left:12px;position:relative">
            <span style="position:absolute;left:0;color:var(--gold)">›</span>
