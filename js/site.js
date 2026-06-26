@@ -231,7 +231,7 @@ function renderFeaturedSection(){
         ${p.badge?`<span style="background:var(--gold);color:#0a0a0a;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px">${p.badge}</span>`:""}
       </div>
       <h2>${p.name}</h2>
-      <p>${p.description||"Produto premium importado exclusivamente pela FKA Imports."}</p>
+      <p>${formatDesc(p.description || "Produto premium importado exclusivamente pela FKA Imports.")}</p>
       <div class="feat-badges" style="margin-bottom:18px">
         <span class="feat-badge">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
         ${p.oldprice?`<span class="feat-badge" style="text-decoration:line-through;opacity:.5;border-color:transparent">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>`:""}
