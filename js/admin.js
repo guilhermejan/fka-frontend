@@ -1,5 +1,5 @@
 let allProducts = [];
-let imgUrls = []; // todas as URLs finais (existentes + recém upadas)
+let imgUrls = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   if (!localStorage.getItem("token")) {
@@ -103,76 +103,82 @@ function renderFeatured() {
 }
 
 // ===============================
-// SLOTS DE IMAGEM
+// DRAG & DROP DE IMAGENS
 // ===============================
-// imgUrls é um array misto:
-//   - string  → URL já salva no Cloudinary
-//   - object  → { file: File, preview: objectURL } ainda não upado
 
-function renderImgSlots() {
-  const container = document.getElementById("img-slots-container");
-  if (!container) return;
+function initDropzone() {
+  const zone = document.getElementById("img-dropzone");
+  const input = document.getElementById("product-img-file");
+  if (!zone || !input) return;
 
-  const MAX = 5;
-  let html = "";
+  // clique na zona abre o seletor
+  zone.addEventListener("click", () => input.click());
 
-  imgUrls.forEach((item, i) => {
-    const src = typeof item === "string" ? item : item.preview;
-    const isFirst = i === 0;
-    html += `
-      <div class="img-slot filled">
-        <img src="${escapeHtml(src)}" alt="">
-        ${isFirst ? `<span class="img-slot-principal">Principal</span>` : ""}
-        <button type="button" class="img-slot-remove" onclick="removeImgSlot(${i})" title="Remover">&times;</button>
-      </div>`;
+  // drag visual
+  zone.addEventListener("dragover", e => {
+    e.preventDefault();
+    zone.classList.add("dragover");
+  });
+  zone.addEventListener("dragleave", () => zone.classList.remove("dragover"));
+  zone.addEventListener("drop", e => {
+    e.preventDefault();
+    zone.classList.remove("dragover");
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
+    addFiles(files);
   });
 
-  const remaining = MAX - imgUrls.length;
-  for (let i = 0; i < remaining; i++) {
-    html += `
-      <div class="img-slot empty" onclick="openSlotPicker(event)" title="Adicionar imagem">
-        <span class="img-slot-plus">+</span>
-        <span class="img-slot-label">Adicionar</span>
+  // seletor de arquivo
+  input.addEventListener("change", e => {
+    const files = Array.from(e.target.files || []);
+    addFiles(files);
+    input.value = "";
+  });
+}
+
+function addFiles(files) {
+  const slotsLeft = 5 - imgUrls.length;
+  if (slotsLeft <= 0) return;
+  files.slice(0, slotsLeft).forEach(file => {
+    imgUrls.push({ file, preview: URL.createObjectURL(file) });
+  });
+  renderImgPreviews();
+}
+
+function renderImgPreviews() {
+  const container = document.getElementById("img-previews");
+  const zone = document.getElementById("img-dropzone");
+  if (!container) return;
+
+  container.innerHTML = imgUrls.map((item, i) => {
+    const src = typeof item === "string" ? item : item.preview;
+    const isPrimary = i === 0;
+    return `
+      <div class="img-preview-item">
+        <img src="${escapeHtml(src)}" alt="">
+        ${isPrimary ? `<span class="img-preview-principal">Principal</span>` : ""}
+        <button type="button" class="img-preview-remove" onclick="removeImgItem(${i})" title="Remover">&times;</button>
       </div>`;
+  }).join("");
+
+  // esconde/mostra a zona de drop conforme limite
+  if (zone) {
+    zone.style.display = imgUrls.length >= 5 ? "none" : "flex";
   }
 
-  container.innerHTML = html;
+  // atualiza contador
+  const counter = document.getElementById("img-counter");
+  if (counter) counter.textContent = `${imgUrls.length}/5 imagens`;
 }
 
-function openSlotPicker(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  if (imgUrls.length >= 5) return;
-  const input = document.getElementById("product-img-file");
-  input.value = "";
-  input.click();
-}
-window.openSlotPicker = openSlotPicker;
-
-function removeImgSlot(idx) {
+function removeImgItem(idx) {
   const item = imgUrls[idx];
   if (item && typeof item === "object" && item.preview) {
     URL.revokeObjectURL(item.preview);
   }
   imgUrls.splice(idx, 1);
-  renderImgSlots();
+  renderImgPreviews();
 }
-window.removeImgSlot = removeImgSlot;
-
-function handleImgUpload(e) {
-  const files = Array.from(e.target.files || []);
-  if (!files.length) return;
-
-  const slotsLeft = 5 - imgUrls.length;
-  files.slice(0, slotsLeft).forEach(file => {
-    imgUrls.push({ file, preview: URL.createObjectURL(file) });
-  });
-
-  renderImgSlots();
-}
-window.handleImgUpload = handleImgUpload;
+window.removeImgItem = removeImgItem;
 
 // ===============================
 // MODAL DE PRODUTO
@@ -196,8 +202,6 @@ function openProductModal(id) {
     document.getElementById("product-badge").value = product.badge || "";
     document.getElementById("product-desc").value = product.description || "";
     document.getElementById("product-active").checked = !!product.active;
-
-    // carrega URLs existentes como strings simples
     imgUrls = parseImgs(product.img);
   } else {
     document.getElementById("product-modal-title").textContent = "Novo Produto";
@@ -205,17 +209,20 @@ function openProductModal(id) {
     document.getElementById("product-active").checked = true;
   }
 
-  renderImgSlots();
-  const fileInput = document.getElementById("product-img-file");
-  fileInput.onchange = handleImgUpload;
   overlay.classList.add("open");
+  // inicializa dropzone depois do modal abrir
+  setTimeout(() => {
+    renderImgPreviews();
+    initDropzone();
+  }, 50);
 }
 window.openProductModal = openProductModal;
 
 function closeProductModal() {
-  // revoga object URLs pendentes
   imgUrls.forEach(item => {
-    if (item && item._objectUrl) URL.revokeObjectURL(item._objectUrl);
+    if (item && typeof item === "object" && item.preview) {
+      URL.revokeObjectURL(item.preview);
+    }
   });
   imgUrls = [];
   document.getElementById("product-modal-overlay").classList.remove("open");
@@ -236,7 +243,6 @@ async function saveProduct(e) {
 
   try {
     const finalUrls = [];
-
     for (const item of imgUrls) {
       if (typeof item === "object" && item.file) {
         const url = await uploadImage(item.file);
@@ -301,7 +307,6 @@ window.removeProduct = removeProduct;
 function openFeaturedModal() {
   const overlay = document.getElementById("featured-modal-overlay");
   const container = document.getElementById("featured-options");
-
   if (allProducts.length === 0) {
     container.innerHTML = `<p class="empty-row">Nenhum produto cadastrado.</p>`;
   } else {
@@ -318,7 +323,6 @@ function openFeaturedModal() {
         </button>`;
     }).join("");
   }
-
   overlay.classList.add("open");
 }
 window.openFeaturedModal = openFeaturedModal;
@@ -356,9 +360,7 @@ async function loadHeroBgSetting() {
     } else {
       if (btnRemove) btnRemove.style.display = "none";
     }
-  } catch(e) {
-    console.log("Sem configuração de fundo salva.");
-  }
+  } catch(e) {}
 }
 
 async function handleHeroBgUpload(e) {
@@ -381,9 +383,8 @@ async function handleHeroBgUpload(e) {
     }
     const btnRemove = document.getElementById("btn-remove-bg");
     if (btnRemove) btnRemove.style.display = "inline-flex";
-    alert("Fundo atualizado com sucesso!");
+    alert("Fundo atualizado!");
   } catch(err) {
-    console.error(err);
     alert("Erro ao fazer upload: " + err.message);
   } finally {
     btn.textContent = "Upload de imagem";
@@ -393,7 +394,7 @@ async function handleHeroBgUpload(e) {
 }
 
 async function removeHeroBg() {
-  if (!confirm("Remover a imagem de fundo e voltar ao grid padrão?")) return;
+  if (!confirm("Remover a imagem de fundo?")) return;
   try {
     await updateSetting("hero_bg", "");
     const box = document.getElementById("hero-bg-preview-box");
@@ -406,10 +407,9 @@ async function removeHeroBg() {
     }
     const btnRemove = document.getElementById("btn-remove-bg");
     if (btnRemove) btnRemove.style.display = "none";
-    alert("Fundo removido. O site voltará ao grid padrão.");
+    alert("Fundo removido.");
   } catch(err) {
-    console.error(err);
-    alert("Erro ao remover fundo: " + err.message);
+    alert("Erro: " + err.message);
   }
 }
 
