@@ -26,22 +26,6 @@ function formatDesc(text) {
     .join("");
 }
 
-function formatDesc(text) {
-  if (!text) return "";
-  return text
-    .split("\n")
-    .map(line => line.trim())
-    .filter(Boolean)
-    .map(line => line.startsWith("*") 
-      ? `<span style="display:block;padding-left:12px;position:relative">
-           <span style="position:absolute;left:0;color:var(--gold)">›</span>
-           ${line.slice(1).trim()}
-         </span>`
-      : `<span style="display:block">${line}</span>`
-    )
-    .join("");
-}
-
 (function(){
   let track, isDragging=false, startX=0, scrollLeft=0, dragMoved=false;
   document.addEventListener("DOMContentLoaded",()=>{
