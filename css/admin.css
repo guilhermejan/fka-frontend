@@ -842,3 +842,131 @@ tbody tr:last-child td {
   color: #444;
   margin-top: 4px;
 }
+
+/* ── DROPZONE DE IMAGENS ── */
+.img-upload-section {
+  margin-bottom: var(--space-3);
+}
+
+.img-upload-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.img-counter {
+  font-size: 11px;
+  color: var(--text-faint);
+  float: right;
+}
+
+#img-dropzone {
+  border: 2px dashed rgba(226,179,74,.3);
+  border-radius: var(--radius-md);
+  background: rgba(226,179,74,.03);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  text-align: center;
+  user-select: none;
+  max-height: 120px;
+  overflow: hidden;
+}
+
+#img-dropzone:hover,
+#img-dropzone.dragover {
+  border-color: var(--gold);
+  background: rgba(226,179,74,.07);
+}
+
+#img-dropzone.dragover {
+  transform: scale(1.01);
+}
+
+.dropzone-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.dropzone-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.dropzone-sub {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+#img-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.img-preview-item {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1.5px solid rgba(226,179,74,.25);
+  flex-shrink: 0;
+}
+
+.img-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #111;
+  display: block;
+}
+
+.img-preview-principal {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(226,179,74,.9);
+  color: #0a0a0a;
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  padding: 2px 0;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.img-preview-remove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.8);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+.img-preview-item:hover .img-preview-remove {
+  opacity: 1;
+}
