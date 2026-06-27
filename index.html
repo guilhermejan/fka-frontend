@@ -21,7 +21,6 @@
 
 html { scroll-behavior: smooth; }
 
-/* ─── GRADIENTE ÚNICO NO BODY ──────────────────────────────────────────── */
 body {
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
@@ -45,7 +44,6 @@ body {
 
 a { text-decoration: none; color: inherit; }
 
-/* ─── CURSOR GLOW ───────────────────────────────────────────────────────── */
 #fka-cursor-glow {
   position: fixed;
   width: 420px; height: 420px;
@@ -59,7 +57,6 @@ a { text-decoration: none; color: inherit; }
   will-change: left, top;
 }
 
-/* ─── INTRO ─────────────────────────────────────────────────────────────── */
 #fka-intro {
   position: fixed; inset: 0;
   background: #050403;
@@ -107,7 +104,6 @@ a { text-decoration: none; color: inherit; }
 @keyframes ruleGrow  { to { width: 160px; } }
 @keyframes fadeUp    { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 
-/* ─── NAV ───────────────────────────────────────────────────────────────── */
 nav {
   position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
@@ -131,14 +127,12 @@ nav {
 }
 .btn-nav:hover { opacity: .88; transform: translateY(-1px); }
 
-/* ─── DIVIDER ────────────────────────────────────────────────────────────── */
 .sec-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(201,168,76,.07), transparent);
   margin: 0;
 }
 
-/* ─── HERO ───────────────────────────────────────────────────────────────── */
 .hero {
   min-height: 91vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -243,7 +237,6 @@ nav {
 }
 .stat-label { font-size: 10px; color: #3d3320; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 3px; }
 
-/* ─── TICKER (badge strip) ─────────────────────────────────────────────── */
 .badge-strip {
   overflow: hidden;
   border-top: 1px solid rgba(201,168,76,.06);
@@ -252,12 +245,17 @@ nav {
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
-.ticker-track {
-  display: flex; gap: 52px;
+.ticker-viewport {
+  display: flex;
   width: max-content;
   animation: ticker 22s linear infinite;
+  will-change: transform;
 }
-.badge-strip:hover .ticker-track { animation-play-state: paused; }
+.ticker-track {
+  display: flex; gap: 52px;
+  flex-shrink: 0;
+  padding-right: 52px;
+}
 @keyframes ticker {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
@@ -271,7 +269,6 @@ nav {
 .badge-item:hover { color: var(--gold); }
 .badge-item i { font-size: 15px; color: var(--gold); }
 
-/* ─── SEÇÕES GENÉRICAS ─────────────────────────────────────────────────── */
 .carousel-section, .featured-section, .benefits-section, .reviews-section, .cta-section { background: transparent; padding: 70px 24px; }
 
 .section-tag, .section-tag-center {
@@ -294,7 +291,6 @@ nav {
 }
 .gold-line-center { margin: 10px auto 28px; }
 
-/* ─── CATÁLOGO CARROSSEL ────────────────────────────────────────────────── */
 .carousel-header {
   display: flex; align-items: center; justify-content: center; position: relative;
   max-width: 900px; margin: 0 auto 24px; padding: 0 8px;
@@ -379,7 +375,6 @@ nav {
 }
 .scroll-hint i { font-size: 14px; }
 
-/* ─── PRODUTO EM DESTAQUE ──────────────────────────────────────────────── */
 .featured-inner {
   max-width: 840px; margin: 0 auto;
   background: rgba(0,0,0,.26); border: 1px solid rgba(201,168,76,.14);
@@ -407,7 +402,6 @@ nav {
   padding: 5px 12px; border-radius: 5px;
 }
 
-/* ─── DEPOIMENTOS ──────────────────────────────────────────────────────── */
 .reviews-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 14px; max-width: 840px; margin: 0 auto;
@@ -429,7 +423,6 @@ nav {
   font-size: 12px; font-weight: 800; color: var(--gold); flex-shrink: 0;
 }
 
-/* ─── BENEFÍCIOS ───────────────────────────────────────────────────────── */
 .benefits-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px; max-width: 840px; margin: 0 auto;
@@ -449,7 +442,6 @@ nav {
 .benefit-card h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 800; color: #e8dcc4; margin-bottom: 5px; }
 .benefit-card p { font-size: 11.5px; color: #3d3320; line-height: 1.6; }
 
-/* ─── CTA ──────────────────────────────────────────────────────────────── */
 .cta-section { text-align: center; position: relative; }
 .cta-glow {
   position: absolute; bottom: -10%; left: 50%; transform: translateX(-50%);
@@ -491,7 +483,6 @@ nav {
 }
 .btn-catalog:hover { background: rgba(201,168,76,.08); }
 
-/* ─── FOOTER ────────────────────────────────────────────────────────────── */
 footer {
   padding: 24px 32px; border-top: 1px solid rgba(201,168,76,.07);
   display: flex; align-items: center; justify-content: space-between;
@@ -502,7 +493,6 @@ footer {
 .footer-links a { font-size: 11px; color: #2a2214; transition: color .2s; }
 .footer-links a:hover { color: var(--gold); }
 
-/* ─── SCROLL REVEAL ─────────────────────────────────────────────────────── */
 .fka-reveal {
   opacity: 0; transform: translateY(28px);
   transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1);
@@ -517,7 +507,6 @@ footer {
 .fka-stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:.25s; }
 .fka-stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:.35s; }
 
-/* ─── MODAL DE PRODUTO (lógica original — não alterar nomes) ───────────── */
 .prod-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(6px); z-index:200; align-items:center; justify-content:center; padding:16px; opacity:0; transition:opacity .22s ease; }
 .prod-modal-overlay.open { display:flex; opacity:1; }
 .prod-modal { background:#131313; border:1px solid var(--gold-line); border-radius:16px; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; transform:translateY(12px) scale(.97); opacity:0; transition:transform .24s ease,opacity .24s ease; position:relative; }
@@ -554,8 +543,13 @@ footer {
   .hero { padding: 70px 20px 50px; min-height: auto; }
   .hero-stats { gap: 20px; }
   .badge-strip { padding: 12px 0; }
-  .carousel-track { padding: 0 16px; }
-  .prod-card { flex: 0 0 180px; }
+  .carousel-track {
+    justify-content: flex-start;
+    padding: 0 38px;
+    scroll-padding-left: 38px;
+    scroll-snap-type: x mandatory;
+  }
+  .prod-card { flex: 0 0 78vw; max-width: 280px; scroll-snap-align: center; }
   .featured-inner { padding: 24px 20px; flex-direction: column; align-items: center; }
   .feat-prod-img, .feat-prod-placeholder { width: 100%; height: 220px; }
   .featured-text h2 { font-size: 18px; }
@@ -566,9 +560,6 @@ footer {
 </head>
 <body>
 
-<!-- =====================================================
-     INTRO SPLASH
-     ===================================================== -->
 <div id="fka-intro">
   <div class="intro-logo-wrap">
     <div class="intro-brand">FKA</div>
@@ -578,9 +569,6 @@ footer {
   </div>
 </div>
 
-<!-- =====================================================
-     CURSOR GLOW
-     ===================================================== -->
 <div id="fka-cursor-glow"></div>
 
 <div id="site">
@@ -615,17 +603,21 @@ footer {
 </section>
 
 <div class="badge-strip fka-reveal">
-  <div class="ticker-track">
-    <div class="badge-item"><i class="ti ti-truck-delivery"></i>Entrega para todo o Brasil</div>
-    <div class="badge-item"><i class="ti ti-shield-check"></i>Produtos com garantia</div>
-    <div class="badge-item"><i class="ti ti-currency-dollar"></i>Melhores preços importados</div>
-    <div class="badge-item"><i class="ti ti-headset"></i>Suporte pelo WhatsApp</div>
-    <div class="badge-item"><i class="ti ti-refresh"></i>Trocas facilitadas</div>
-    <div class="badge-item"><i class="ti ti-truck-delivery"></i>Entrega para todo o Brasil</div>
-    <div class="badge-item"><i class="ti ti-shield-check"></i>Produtos com garantia</div>
-    <div class="badge-item"><i class="ti ti-currency-dollar"></i>Melhores preços importados</div>
-    <div class="badge-item"><i class="ti ti-headset"></i>Suporte pelo WhatsApp</div>
-    <div class="badge-item"><i class="ti ti-refresh"></i>Trocas facilitadas</div>
+  <div class="ticker-viewport">
+    <div class="ticker-track">
+      <div class="badge-item"><i class="ti ti-truck-delivery"></i>Entrega para todo o Brasil</div>
+      <div class="badge-item"><i class="ti ti-shield-check"></i>Produtos com garantia</div>
+      <div class="badge-item"><i class="ti ti-currency-dollar"></i>Melhores preços importados</div>
+      <div class="badge-item"><i class="ti ti-headset"></i>Suporte pelo WhatsApp</div>
+      <div class="badge-item"><i class="ti ti-refresh"></i>Trocas facilitadas</div>
+    </div>
+    <div class="ticker-track" aria-hidden="true">
+      <div class="badge-item"><i class="ti ti-truck-delivery"></i>Entrega para todo o Brasil</div>
+      <div class="badge-item"><i class="ti ti-shield-check"></i>Produtos com garantia</div>
+      <div class="badge-item"><i class="ti ti-currency-dollar"></i>Melhores preços importados</div>
+      <div class="badge-item"><i class="ti ti-headset"></i>Suporte pelo WhatsApp</div>
+      <div class="badge-item"><i class="ti ti-refresh"></i>Trocas facilitadas</div>
+    </div>
   </div>
 </div>
 
@@ -706,7 +698,6 @@ footer {
 </footer>
 </div>
 
-<!-- Modal de produto (estrutura original — necessária para site.js) -->
 <div class="prod-modal-overlay" id="prod-modal-overlay" onclick="closeProdModal(event)">
   <div class="prod-modal" id="prod-modal">
     <button class="prod-modal-close" onclick="closeProdModal(event)">&times;</button>
@@ -714,12 +705,8 @@ footer {
   </div>
 </div>
 
-<!-- =====================================================
-     SCRIPTS DE ANIMAÇÃO — devem vir ANTES de api.js e site.js
-     ===================================================== -->
 <script>
 (function () {
-  /* --- INTRO SPLASH --- */
   var intro = document.getElementById('fka-intro');
   if (intro) {
     document.body.style.overflow = 'hidden';
@@ -732,7 +719,6 @@ footer {
     }, 2800);
   }
 
-  /* --- CURSOR GLOW --- */
   var glow = document.getElementById('fka-cursor-glow');
   if (glow) {
     var mx = 0, my = 0, gx = 0, gy = 0;
@@ -753,7 +739,6 @@ footer {
     })();
   }
 
-  /* --- SCROLL REVEAL (IntersectionObserver) --- */
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting) {
@@ -769,7 +754,6 @@ footer {
 })();
 </script>
 
-<!-- seus scripts originais — sem alteração -->
 <script src="js/api.js"></script>
 <script src="js/site.js"></script>
 </body>
