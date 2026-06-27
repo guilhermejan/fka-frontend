@@ -319,9 +319,10 @@ nav {
 }
 .ver-todos:hover { gap: 10px; }
 
-.carousel-outer { position: relative; overflow: hidden; padding: 4px 0 16px; }
+.carousel-outer { position: relative; overflow: hidden; padding: 4px 0 16px; display: flex; justify-content: center; }
 .carousel-track {
-  display: flex; gap: 14px; padding: 0 24px;
+  display: flex; gap: 14px; justify-content: center;
+  max-width: 900px; width: 100%; margin: 0 auto; padding: 0 8px;
   overflow-x: auto; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; cursor: grab; user-select: none;
   scrollbar-width: none;
