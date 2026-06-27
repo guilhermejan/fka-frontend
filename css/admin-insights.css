@@ -1,7 +1,4 @@
-/* ============================================
-   INSIGHTS DE VISITANTES (Google Analytics)
-   Adicionar este bloco ao final do admin.css existente
-   ============================================ */
+/* admin-insights.css */
 
 .insights-section {
   background: var(--bg-card);
@@ -11,100 +8,232 @@
   margin-bottom: var(--space-5);
 }
 
-.insights-section .section-header p span {
+.insights-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.insights-header-left h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+
+.insights-header-left p {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.insights-header-left p span {
   color: var(--gold);
   font-weight: 600;
 }
 
-.period-select {
+.insights-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.insights-period-select {
   background: var(--bg-panel);
   border: 1px solid var(--border);
   color: var(--text);
-  border-radius: var(--radius-sm);
-  padding: 9px 14px;
+  font-size: 12px;
   font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  outline: none;
+  transition: border-color .2s;
 }
 
-.period-select:focus {
-  outline: none;
+.insights-period-select:focus {
   border-color: var(--gold);
 }
 
-.insights-loading,
-.insights-error {
-  text-align: center;
-  color: var(--text-faint);
-  padding: var(--space-6) 0;
-  font-size: 13px;
+.btn-ga-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(226,179,74,.3);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 7px 13px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background .2s, border-color .2s;
+  white-space: nowrap;
 }
 
-.insights-error {
-  color: var(--red);
+.btn-ga-link:hover {
+  background: rgba(226,179,74,.2);
+  border-color: var(--gold);
 }
 
-.insights-overview-grid {
-  margin-bottom: var(--space-5);
-}
-
-.insights-columns {
+/* Stats */
+.insights-stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
-.insights-col {
+@media (max-width: 700px) {
+  .insights-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.insight-stat {
   background: var(--bg-panel);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
 
-.insights-col h3 {
-  font-family: var(--font-display);
-  font-size: 14.5px;
+.insight-stat-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-faint);
+  text-transform: uppercase;
   font-weight: 600;
-  margin-bottom: var(--space-3);
-  color: var(--text);
+  margin-bottom: var(--space-2);
 }
 
-.insights-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.insight-stat-value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+}
+
+/* Gráfico */
+.insights-chart-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.insights-chart-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+}
+
+#insights-chart {
+  width: 100%;
+  min-height: 120px;
+}
+
+.chart-dot { cursor: pointer; }
+
+/* Grid de listas */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .insights-grid { grid-template-columns: 1fr; }
+}
+
+.insights-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.insights-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 12px;
 }
 
 .insights-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: 9px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-sm);
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.insights-row:last-child { border-bottom: none; }
+
+.ir-label {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  flex: 0 0 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ir-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: rgba(226,179,74,.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ir-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #a07830, var(--gold));
+  border-radius: 2px;
+  transition: width .4s ease;
+}
+
+.ir-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+  min-width: 24px;
+  text-align: right;
+}
+
+.empty-row {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Loading / Error */
+#insights-loading {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-dim);
   font-size: 13px;
 }
 
-.insights-row .ir-label {
-  color: var(--text);
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.insights-row .ir-value {
-  color: var(--gold);
-  font-weight: 700;
-  font-family: var(--font-display);
-  flex-shrink: 0;
-}
-
-@media (max-width: 900px) {
-  .insights-columns {
-    grid-template-columns: 1fr;
-  }
+#insights-error {
+  background: rgba(240,107,107,.08);
+  border: 1px solid rgba(240,107,107,.2);
+  color: var(--red);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  display: none;
 }
