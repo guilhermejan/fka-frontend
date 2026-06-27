@@ -248,17 +248,12 @@ nav {
 .ticker-viewport {
   display: flex;
   width: max-content;
-  animation: ticker 22s linear infinite;
   will-change: transform;
 }
 .ticker-track {
   display: flex; gap: 52px;
   flex-shrink: 0;
   padding-right: 52px;
-}
-@keyframes ticker {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
 }
 .badge-item {
   display: flex; align-items: center; gap: 8px;
@@ -597,7 +592,7 @@ footer {
   <div class="hero-stats">
     <div><div class="stat-num">100+</div><div class="stat-label">Clientes</div></div>
     <div><div class="stat-num">100%</div><div class="stat-label">Satisfação</div></div>
-    <div><div class="stat-num">+20</div><div class="stat-label">Produtos</div></div>
+    <div><div class="stat-num">20</div><div class="stat-label">Produtos</div></div>
     <div><div class="stat-num">5.0★</div><div class="stat-label">Avaliação</div></div>
   </div>
 </section>
@@ -751,9 +746,37 @@ footer {
   document.querySelectorAll('.fka-reveal, .fka-stagger').forEach(function (el) {
     io.observe(el);
   });
+
+  var tickerViewport = document.querySelector('.ticker-viewport');
+  if (tickerViewport) {
+    var firstTrack = tickerViewport.querySelector('.ticker-track');
+    var trackWidth = 0;
+    var pos = 0;
+    var speed = 40; 
+    var lastTime = null;
+
+    function measure() {
+      trackWidth = firstTrack.getBoundingClientRect().width;
+    }
+    measure();
+    window.addEventListener('resize', measure);
+
+    function tick(time) {
+      if (lastTime === null) lastTime = time;
+      var delta = (time - lastTime) / 1000;
+      lastTime = time;
+
+      pos -= speed * delta;
+      if (trackWidth > 0 && pos <= -trackWidth) {
+        pos += trackWidth;
+      }
+      tickerViewport.style.transform = 'translateX(' + pos + 'px)';
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
 })();
 </script>
-
 <script src="js/api.js"></script>
 <script src="js/site.js"></script>
 </body>

@@ -180,6 +180,17 @@ function renderCarousel(){
       </div>
     </div>`;
   }).join("");
+
+  if (window.innerWidth <= 640 && active.length > 1) {
+    requestAnimationFrame(() => {
+      const cards = track.querySelectorAll(".prod-card");
+      const second = cards[1];
+      if (second) {
+        const targetScroll = second.offsetLeft - (track.clientWidth - second.offsetWidth) / 2;
+        track.scrollLeft = Math.max(0, targetScroll);
+      }
+    });
+  }
 }
 
 function handleCardClick(e, id) {
