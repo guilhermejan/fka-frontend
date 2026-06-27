@@ -13,9 +13,19 @@ function parseImgs(raw) {
   return [];
 }
 
+function escapeHTML(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function formatDesc(text) {
   if (!text) return "";
-  return text
+  return escapeHTML(text)
     .split("\n")
     .map(line => line.trim())
     .filter(Boolean)
@@ -100,10 +110,10 @@ function openProdModal(id) {
     <div class="prod-modal-body">
       <div class="prod-modal-top">
         <div>
-          <div class="prod-modal-cat">${p.cat || ""}</div>
-          <div class="prod-modal-name">${p.name}</div>
+          <div class="prod-modal-cat">${escapeHTML(p.cat || "")}</div>
+          <div class="prod-modal-name">${escapeHTML(p.name)}</div>
         </div>
-        ${p.badge ? `<span class="prod-modal-badge">${p.badge}</span>` : ""}
+        ${p.badge ? `<span class="prod-modal-badge">${escapeHTML(p.badge)}</span>` : ""}
       </div>
       ${p.description ? `<div class="prod-modal-desc">${formatDesc(p.description)}</div>` : ""}
       <div class="prod-modal-prices">
@@ -161,14 +171,14 @@ function renderCarousel(){
     const thumb = imgs[0] || "";
     return `
     <div class="prod-card" onclick="handleCardClick(event,${p.id})">
-      ${p.badge ? `<span class="prod-badge-new">${p.badge}</span>` : ""}
+      ${p.badge ? `<span class="prod-badge-new">${escapeHTML(p.badge)}</span>` : ""}
       ${thumb
-        ? `<img class="prod-card-img" src="${thumb}" alt="${p.name}" draggable="false">`
+        ? `<img class="prod-card-img" src="${thumb}" alt="${escapeHTML(p.name)}" draggable="false">`
         : `<div class="prod-card-img-placeholder"><span>Imagem não disponível</span></div>`
       }
       <div class="prod-card-body">
-        <div class="prod-card-cat">${p.cat}</div>
-        <div class="prod-card-name" title="${p.name}">${p.name}</div>
+        <div class="prod-card-cat">${escapeHTML(p.cat)}</div>
+        <div class="prod-card-name" title="${escapeHTML(p.name)}">${escapeHTML(p.name)}</div>
         <div class="prod-card-desc">${formatDesc(p.description)}</div>
         <div class="prod-card-prices">
           <span class="prod-price">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
@@ -217,15 +227,15 @@ function renderFeaturedSection(){
 
   inner.innerHTML = `
     ${thumb
-      ? `<img src="${thumb}" alt="${p.name}" class="feat-prod-img">`
+      ? `<img src="${thumb}" alt="${escapeHTML(p.name)}" class="feat-prod-img">`
       : `<div class="feat-prod-placeholder">Imagem não disponível</div>`
     }
     <div class="featured-text">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="background:rgba(201,168,76,.1);color:var(--gold);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;border:1px solid rgba(201,168,76,.2);text-transform:uppercase;letter-spacing:.5px">${p.cat}</span>
-        ${p.badge?`<span style="background:var(--gold);color:#0a0a0a;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px">${p.badge}</span>`:""}
+        <span style="background:rgba(201,168,76,.1);color:var(--gold);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;border:1px solid rgba(201,168,76,.2);text-transform:uppercase;letter-spacing:.5px">${escapeHTML(p.cat)}</span>
+        ${p.badge?`<span style="background:var(--gold);color:#0a0a0a;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px">${escapeHTML(p.badge)}</span>`:""}
       </div>
-      <h2>${p.name}</h2>
+      <h2>${escapeHTML(p.name)}</h2>
       <p>${formatDesc(p.description || "Produto premium importado exclusivamente pela FKA Imports.")}</p>
       <div class="feat-badges" style="margin-bottom:18px">
         <span class="feat-badge">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
