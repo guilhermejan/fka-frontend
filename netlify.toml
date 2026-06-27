@@ -13,4 +13,9 @@
   minify = false
 
 [build.processing.html]
-  pretty_urls = false
+  pretty_urls = true
+
+[[redirects]]
+  from = "/fecca"
+  to = "/fecca.html"
+  status = 200

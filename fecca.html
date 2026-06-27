@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Admin - FKA Imports</title>
 <link rel="stylesheet" href="./css/admin.css">
+<link rel="stylesheet" href="./css/admin-insights.css">
 </head>
 <body>
 
@@ -37,6 +38,76 @@
     <div class="stat-card">
       <span class="stat-label">Com Foto</span>
       <strong id="stat-with-photo">0</strong>
+    </div>
+  </section>
+
+  <section class="insights-section">
+    <div class="section-header">
+      <div>
+        <h2>Insights de Visitantes</h2>
+        <p>Dados do Google Analytics — últimos <span id="insights-days">30</span> dias</p>
+      </div>
+      <select id="insights-period" class="period-select">
+        <option value="7">7 dias</option>
+        <option value="30" selected>30 dias</option>
+        <option value="90">90 dias</option>
+      </select>
+    </div>
+
+    <div id="insights-loading" class="insights-loading">Carregando dados do Analytics...</div>
+    <div id="insights-error" class="insights-error" style="display:none"></div>
+
+    <div id="insights-content" style="display:none">
+
+      <div class="stats-grid insights-overview-grid">
+        <div class="stat-card">
+          <span class="stat-label">Visualizações</span>
+          <strong id="insight-pageviews">0</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Visitantes</span>
+          <strong id="insight-users">0</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Sessões</span>
+          <strong id="insight-sessions">0</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Tempo Médio</span>
+          <strong id="insight-duration">0s</strong>
+        </div>
+      </div>
+
+      <div class="insights-columns">
+        <div class="insights-col">
+          <h3>Origem do Tráfego</h3>
+          <div id="insights-traffic-list" class="insights-list">
+            <p class="empty-row">Sem dados no período</p>
+          </div>
+        </div>
+
+        <div class="insights-col">
+          <h3>Produtos Mais Vistos</h3>
+          <div id="insights-views-list" class="insights-list">
+            <p class="empty-row">Sem dados no período</p>
+          </div>
+        </div>
+
+        <div class="insights-col">
+          <h3>Cliques no WhatsApp por Produto</h3>
+          <div id="insights-clicks-list" class="insights-list">
+            <p class="empty-row">Sem dados no período</p>
+          </div>
+        </div>
+
+        <div class="insights-col">
+          <h3>Cliques no WhatsApp por Origem</h3>
+          <div id="insights-wpp-sources-list" class="insights-list">
+            <p class="empty-row">Sem dados no período</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -161,6 +232,7 @@
 </div>
 
 <script src="./js/api.js"></script>
+<script src="./js/admin-insights.js"></script>
 <script src="./js/admin.js"></script>
 </body>
 </html>
