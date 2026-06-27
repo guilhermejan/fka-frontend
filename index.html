@@ -147,12 +147,6 @@ nav {
   background: transparent;
   transition: background .4s;
 }
-.hero-grid {
-  position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(201,168,76,.03) 1px,transparent 1px), linear-gradient(90deg, rgba(201,168,76,.03) 1px, transparent 1px);
-  background-size: 44px 44px;
-  pointer-events: none;
-}
 .deco-l, .deco-r {
   position: absolute; top: 10%; bottom: 10%; width: 1px;
   background: linear-gradient(to bottom, transparent, rgba(201,168,76,.12), transparent);
@@ -302,10 +296,11 @@ nav {
 
 /* ─── CATÁLOGO CARROSSEL ────────────────────────────────────────────────── */
 .carousel-header {
-  display: flex; align-items: flex-end; justify-content: space-between;
+  display: flex; align-items: center; justify-content: center; position: relative;
   max-width: 900px; margin: 0 auto 24px; padding: 0 8px;
-  flex-wrap: wrap; gap: 12px;
+  flex-wrap: wrap; gap: 12px; text-align: center;
 }
+.carousel-header-left { width: 100%; display: flex; flex-direction: column; align-items: center; }
 .carousel-header-left h2 {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 22px; font-weight: 800; color: #f0e6cc; letter-spacing: -.4px;
@@ -315,7 +310,7 @@ nav {
 .ver-todos {
   font-size: 13px; font-weight: 600; color: var(--gold);
   display: inline-flex; align-items: center; gap: 6px;
-  transition: gap .2s; white-space: nowrap;
+  transition: gap .2s; white-space: nowrap; margin-top: 4px;
 }
 .ver-todos:hover { gap: 10px; }
 
@@ -601,7 +596,6 @@ footer {
 </nav>
 
 <section class="hero">
-  <div class="hero-grid"></div>
   <div class="deco-l"></div>
   <div class="deco-r"></div>
   <div class="hero-glow"></div>
@@ -642,8 +636,8 @@ footer {
       <h2>Mais Vendidos</h2>
       <p>Clique em um produto para ver detalhes</p>
       <div class="gold-line"></div>
+      <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="ver-todos">Ver todos <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
     </div>
-    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="ver-todos">Ver todos <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
   </div>
   <div class="carousel-outer">
     <div class="carousel-track" id="carousel-track"></div>
