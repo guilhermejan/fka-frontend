@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
   loadProducts();
+  loadHeroBgPreview();
   document.getElementById("product-form")
     .addEventListener("submit", saveProduct);
 });
@@ -16,10 +17,6 @@ function logout() {
   window.location.href = "./acesso.html";
 }
 window.logout = logout;
-
-// ===============================
-// CARREGAR PRODUTOS
-// ===============================
 
 async function loadProducts() {
   const tbody = document.getElementById("products-table");
@@ -102,19 +99,13 @@ function renderFeatured() {
     </div>`;
 }
 
-// ===============================
-// DRAG & DROP DE IMAGENS
-// ===============================
-
 function initDropzone() {
   const zone = document.getElementById("img-dropzone");
   const input = document.getElementById("product-img-file");
   if (!zone || !input) return;
 
-  // clique na zona abre o seletor
   zone.addEventListener("click", () => input.click());
 
-  // drag visual
   zone.addEventListener("dragover", e => {
     e.preventDefault();
     zone.classList.add("dragover");
@@ -160,12 +151,11 @@ function renderImgPreviews() {
       </div>`;
   }).join("");
 
-  // esconde/mostra a zona de drop conforme limite
+
   if (zone) {
     zone.style.display = imgUrls.length >= 5 ? "none" : "flex";
   }
 
-  // atualiza contador
   const counter = document.getElementById("img-counter");
   if (counter) counter.textContent = `${imgUrls.length}/5 imagens`;
 }
@@ -179,10 +169,6 @@ function removeImgItem(idx) {
   renderImgPreviews();
 }
 window.removeImgItem = removeImgItem;
-
-// ===============================
-// MODAL DE PRODUTO
-// ===============================
 
 function openProductModal(id) {
   const overlay = document.getElementById("product-modal-overlay");
@@ -228,10 +214,6 @@ function closeProductModal() {
   document.getElementById("product-modal-overlay").classList.remove("open");
 }
 window.closeProductModal = closeProductModal;
-
-// ===============================
-// SALVAR PRODUTO
-// ===============================
 
 async function saveProduct(e) {
   e.preventDefault();
@@ -300,10 +282,6 @@ async function removeProduct(id) {
 }
 window.removeProduct = removeProduct;
 
-// ===============================
-// DESTAQUE
-// ===============================
-
 function openFeaturedModal() {
   const overlay = document.getElementById("featured-modal-overlay");
   const container = document.getElementById("featured-options");
@@ -343,10 +321,6 @@ async function chooseFeatured(id) {
   }
 }
 window.chooseFeatured = chooseFeatured;
-
-// ===============================
-// CONFIGURAÇÕES — HERO BG
-// ===============================
 
 async function loadHeroBgSetting() {
   try {
@@ -416,10 +390,6 @@ async function removeHeroBg() {
 window.handleHeroBgUpload = handleHeroBgUpload;
 window.removeHeroBg = removeHeroBg;
 
-// ===============================
-// UTILS
-// ===============================
-
 function formatPrice(value) {
   return Number(value || 0).toFixed(2).replace(".", ",");
 }
@@ -441,3 +411,54 @@ document.addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   loadHeroBgSetting();
 });
+
+let _heroBgBase64 = null;
+
+function onHeroBgSelected(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById("hero-bg-filename").textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    _heroBgBase64 = e.target.result;
+    document.getElementById("hero-bg-preview").src = _heroBgBase64;
+    document.getElementById("hero-bg-preview").style.display = "block";
+    document.getElementById("hero-bg-default").style.display = "none";
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveHeroBg() {
+  if (!_heroBgBase64) { alert("Selecione uma imagem primeiro."); return; }
+  try {
+    await saveSetting("hero_bg", _heroBgBase64);
+    alert("Fundo salvo com sucesso!");
+  } catch(e) {
+    alert("Erro ao salvar: " + e.message);
+  }
+}
+
+async function removeHeroBg() {
+  if (!confirm("Remover a imagem de fundo?")) return;
+  try {
+    await saveSetting("hero_bg", "");
+    document.getElementById("hero-bg-preview").style.display = "none";
+    document.getElementById("hero-bg-default").style.display = "flex";
+    document.getElementById("hero-bg-filename").textContent = "";
+    _heroBgBase64 = null;
+    alert("Fundo removido!");
+  } catch(e) {
+    alert("Erro ao remover: " + e.message);
+  }
+}
+
+async function loadHeroBgPreview() {
+  try {
+    const url = await getSetting("hero_bg");
+    if (url && url.trim()) {
+      document.getElementById("hero-bg-preview").src = url;
+      document.getElementById("hero-bg-preview").style.display = "block";
+      document.getElementById("hero-bg-default").style.display = "none";
+    }
+  } catch(e) {}
+}

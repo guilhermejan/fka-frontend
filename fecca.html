@@ -6,6 +6,7 @@
 <title>Painel Admin - FKA Imports</title>
 <link rel="stylesheet" href="./css/admin.css">
 <link rel="stylesheet" href="./css/admin-insights.css">
+<link rel="stylesheet" href="css/admin-insights.css">
 </head>
 <body>
 
@@ -120,6 +121,31 @@
     </div>
   </div>
 </section>
+
+<section class="settings-section">
+  <div class="section-header">
+    <div>
+      <h2>Imagem de Fundo do Site</h2>
+      <p>Imagem exibida atrás do título principal</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-primary" onclick="saveHeroBg()">Salvar Fundo</button>
+      <button class="btn-logout" onclick="removeHeroBg()">Remover Fundo</button>
+    </div>
+  </div>
+  <div id="hero-bg-preview-wrap">
+    <div class="hero-bg-default" id="hero-bg-default">Sem imagem de fundo</div>
+    <img id="hero-bg-preview" class="hero-bg-preview" style="display:none" src="" alt="">
+  </div>
+  <div style="margin-top:12px">
+    <input type="file" id="hero-bg-file" accept="image/*" style="display:none" onchange="onHeroBgSelected(this)">
+    <button class="btn-outline" onclick="document.getElementById('hero-bg-file').click()">
+      📁 Escolher imagem
+    </button>
+    <span id="hero-bg-filename" style="font-size:12px;color:var(--text-faint);margin-left:10px"></span>
+  </div>
+</section>
+
 
   <section class="featured-section">
     <div class="section-header">
