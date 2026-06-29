@@ -937,12 +937,12 @@
    ============================================================ */
 @media (min-width: 641px) {
   .carousel-section {
-    padding-left: 0;
-    padding-right: 0;
-    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    overflow: visible;
   }
   .carousel-outer {
-    overflow: hidden;
+    overflow: visible;
     padding: 4px 0 16px;
     display: block;
     width: 100%;
@@ -951,41 +951,42 @@
   .carousel-track {
     display: flex !important;
     flex-wrap: nowrap;
-    gap: 12px;
+    gap: 14px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    padding: 0 12px;
+    padding: 4px 0;
     cursor: grab;
   }
   .carousel-track::-webkit-scrollbar { display: none; }
   .carousel-track.dragging { cursor: grabbing; }
   .prod-card {
     flex: 1 1 0;
-    min-width: 160px;
+    min-width: 0;
     max-width: none;
     width: 0;
     scroll-snap-align: start;
   }
-  .prod-card-img { height: 200px; }
+  .prod-card-img { height: 210px; }
   .carousel-dots { display: none !important; }
   .scroll-hint { display: none !important; }
   .carousel-arrow { display: none !important; }
-}
-
-@media (min-width: 1024px) {
-  .prod-card { min-width: 180px; }
-  .prod-card-img { height: 220px; }
 }
 
 /* ============================================================
    MOBILE — cards menores
    ============================================================ */
 @media (max-width: 640px) {
+  .carousel-arrow { display: none !important; }
   .prod-card { flex: 0 0 62vw; max-width: 230px; }
   .prod-card-img { height: 130px; }
   .prod-card-body { padding: 10px; }
   .prod-card-name { font-size: 12px; }
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
+}
+
+
+@media (max-width: 640px) {
+  .carousel-arrow { display: none !important; }
 }
