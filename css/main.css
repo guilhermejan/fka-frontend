@@ -937,8 +937,8 @@
    ============================================================ */
 @media (min-width: 641px) {
   .carousel-section {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .carousel-outer {
@@ -946,7 +946,7 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    overflow: visible;
+    overflow: hidden;
     position: relative;
   }
 
@@ -955,12 +955,11 @@
     flex-wrap: nowrap;
     gap: 14px;
     width: 100%;
-    max-width: 900px;
-    justify-content: center;
+    max-width: 100%;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    padding: 4px 8px;
+    padding: 4px 0;
     cursor: grab;
   }
 
@@ -968,18 +967,19 @@
   .carousel-track.dragging { cursor: grabbing; }
 
   .prod-card {
-    flex: 1 1 196px;
+    flex: 1 1 0;
     min-width: 160px;
-    max-width: 240px;
-    width: auto;
+    max-width: none;
+    width: 0;
     scroll-snap-align: start;
   }
 
   .prod-card-img { height: 210px; }
-  .carousel-dots { display: none !important; }
-  .scroll-hint   { display: none !important; }
+  .carousel-dots  { display: none !important; }
+  .scroll-hint    { display: none !important; }
   .carousel-arrow { display: none !important; }
 }
+
 
 /* ============================================================
    MOBILE — cards menores
