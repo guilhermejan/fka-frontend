@@ -1030,3 +1030,14 @@
     max-width: 100% !important;
   }
 }
+
+@media (min-width: 641px) {
+  .carousel-outer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .carousel-track {
+    justify-content: center;
+  }
+}
