@@ -1026,18 +1026,43 @@
 
 @media (min-width: 641px) {
   .carousel-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding-left: 24px;
+    padding-right: 24px;
   }
   .carousel-outer {
-    display: block;
-    width: calc(100% - 96px);
-    margin: 0 auto;
     overflow: visible;
+    padding: 4px 0 16px;
+    display: block;
+    width: 100%;
   }
   .carousel-track {
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    overflow: visible;
     max-width: 100%;
+    padding: 0;
+    cursor: default;
+    scroll-snap-type: none;
   }
+  .carousel-track.dragging { cursor: default; }
+  .prod-card {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    scroll-snap-align: none;
+  }
+  .prod-card-img { height: 190px; }
+  .carousel-dots { display: none !important; }
+  .scroll-hint { display: none; }
+  .carousel-arrow { display: none !important; }
+}
+
+@media (min-width: 1024px) {
+  .carousel-track {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .prod-card-img { height: 210px; }
 }
