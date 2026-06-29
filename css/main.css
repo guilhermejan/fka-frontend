@@ -982,18 +982,18 @@
    ============================================================ */
 
 @media (min-width: 641px) {
-
-  .carousel-section { padding-left: 0; padding-right: 0; }
-
+  .carousel-section {
+    overflow: hidden;
+    padding-left: 0;
+    padding-right: 0;
+  }
   .carousel-outer {
     position: relative;
-    overflow: hidden;
-    padding: 4px 0 16px;
+    overflow: visible;
+    padding: 4px 48px 16px;
     width: 100%;
     display: block;
   }
-
-  /* setas dentro do outer, sobre o track */
   .carousel-arrow {
     display: flex;
     position: absolute;
@@ -1018,18 +1018,16 @@
     background: rgba(201,168,76,.18);
     border-color: rgba(201,168,76,.6);
   }
-  .carousel-arrow-left  { left: 12px; }
-  .carousel-arrow-right { right: 12px; }
-
-  /* track ocupa 100% com padding pras setas */
+  .carousel-arrow-left  { left: 6px; }
+  .carousel-arrow-right { right: 6px; }
   .carousel-track {
     display: flex;
     max-width: 100%;
     width: 100%;
     margin: 0;
-    padding: 4px 56px;
-    scroll-padding-left: 56px;
-    gap: 16px;
+    padding: 4px 0;
+    scroll-padding-left: 0;
+    gap: 14px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     cursor: grab;
@@ -1038,24 +1036,20 @@
   }
   .carousel-track::-webkit-scrollbar { display: none; }
   .carousel-track.dragging { cursor: grabbing; }
-
-  /* cards se expandem pra preencher uniformemente */
   .prod-card {
-    flex: 1 1 200px;
-    min-width: 180px;
-    max-width: 280px;
-    width: auto;
+    flex: 1 1 0;
+    min-width: 160px;
+    max-width: none;
+    width: 0;
     scroll-snap-align: start;
   }
   .prod-card-img { height: 190px; }
-
   .carousel-dots { display: none !important; }
-  .scroll-hint { display: flex; }
+  .scroll-hint { display: none; }
 }
 
 @media (min-width: 1024px) {
-  .carousel-track { padding: 4px 60px; gap: 20px; }
-  .prod-card { min-width: 200px; max-width: 300px; }
+  .carousel-track { gap: 18px; }
   .prod-card-img { height: 210px; }
 }
 
@@ -1073,44 +1067,4 @@
   .prod-card-name { font-size: 12px; }
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
-}
-
-@media (min-width: 641px) {
-  .carousel-section {
-    overflow: hidden;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  .carousel-outer {
-    overflow: visible;
-    padding-left: 56px;
-    padding-right: 56px;
-  }
-  .carousel-track {
-    padding: 4px 0;
-    scroll-padding-left: 0;
-  }
-}
-
-@media (min-width: 641px) {
-  .carousel-outer {
-    overflow: visible;
-    padding: 4px 48px 16px;
-  }
-  .carousel-section {
-    overflow: hidden;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  .carousel-track {
-    padding: 0;
-    scroll-padding-left: 0;
-    justify-content: stretch;
-  }
-  .prod-card {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: none;
-    width: 0;
-  }
 }
