@@ -45,7 +45,7 @@ body {
       #0a0805 88%,
       #080705 100%
     );
-  background-attachment: fixed;
+  background-attachment: scroll;
   min-height: 100vh;
 }
 
@@ -538,13 +538,28 @@ footer {
 .prod-gallery-dot.active { background:var(--gold-light); }
 
 @media (max-width: 640px) {
-  nav { padding: 0 16px; height: 56px; }
-  .nav-links { gap: 12px; }
-  .nav-links a { font-size: 12px; }
+  body { 
+    background-attachment: scroll;
+    overflow-x: hidden;
+  }
+  nav { 
+    padding: 0 16px; 
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .nav-links { gap: 10px; flex-wrap: nowrap; }
+  .nav-links a { font-size: 11px; }
+  .btn-nav { font-size: 10px; padding: 7px 10px; }
   .deco-l, .deco-r { display: none; }
   .hero { padding: 70px 20px 50px; min-height: auto; }
+  .hero-glow { width: 100vw; }
   .hero-stats { gap: 20px; }
   .badge-strip { padding: 12px 0; }
+  .cta-glow { width: 100vw; }
   .carousel-track {
     justify-content: flex-start;
     padding: 0 38px;
@@ -558,6 +573,7 @@ footer {
   .cta-box { padding: 28px 20px; }
   footer { flex-direction: column; align-items: flex-start; padding: 20px; }
 }
+
 </style>
 </head>
 <body>
