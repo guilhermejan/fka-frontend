@@ -939,37 +939,41 @@
   .carousel-section {
     padding-left: 16px;
     padding-right: 16px;
-    overflow: visible;
   }
+
   .carousel-outer {
-    overflow: visible;
     padding: 4px 0 16px;
-    display: block;
+    display: flex;
+    justify-content: center;
     width: 100%;
+    overflow: visible;
     position: relative;
   }
+
   .carousel-track {
     display: flex !important;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;          /* ← era nowrap + overflow-x: auto */
     gap: 14px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    width: 100%;
+    max-width: 900px;
+    justify-content: center;
+    overflow: visible;
+    padding: 4px 8px;
+    cursor: default;
     scrollbar-width: none;
-    padding: 4px 0;
-    cursor: grab;
   }
-  .carousel-track::-webkit-scrollbar { display: none; }
-  .carousel-track.dragging { cursor: grabbing; }
+
   .prod-card {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: none;
-    width: 0;
-    scroll-snap-align: start;
+    flex: 1 1 196px;          /* ← cresce mas tem base real */
+    min-width: 160px;
+    max-width: 240px;
+    width: auto;              /* ← era 0 */
+    scroll-snap-align: unset;
   }
+
   .prod-card-img { height: 210px; }
   .carousel-dots { display: none !important; }
-  .scroll-hint { display: none !important; }
+  .scroll-hint   { display: none !important; }
   .carousel-arrow { display: none !important; }
 }
 
