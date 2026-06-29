@@ -939,7 +939,7 @@
   .carousel-section {
     padding-left: 24px;
     padding-right: 24px;
-    overflow: hidden;
+    overflow: visible;
   }
   .carousel-outer {
     overflow: hidden;
