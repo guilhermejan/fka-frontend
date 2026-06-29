@@ -937,9 +937,9 @@
    ============================================================ */
 @media (min-width: 641px) {
   .carousel-section {
-    padding-left: 24px;
-    padding-right: 24px;
-    overflow: visible;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
   }
   .carousel-outer {
     overflow: hidden;
@@ -951,18 +951,18 @@
   .carousel-track {
     display: flex !important;
     flex-wrap: nowrap;
-    gap: 16px;
+    gap: 12px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    padding: 0;
+    padding: 0 12px;
     cursor: grab;
   }
   .carousel-track::-webkit-scrollbar { display: none; }
   .carousel-track.dragging { cursor: grabbing; }
   .prod-card {
     flex: 1 1 0;
-    min-width: 180px;
+    min-width: 160px;
     max-width: none;
     width: 0;
     scroll-snap-align: start;
@@ -974,7 +974,7 @@
 }
 
 @media (min-width: 1024px) {
-  .prod-card { min-width: 200px; }
+  .prod-card { min-width: 180px; }
   .prod-card-img { height: 220px; }
 }
 
