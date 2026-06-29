@@ -322,74 +322,6 @@ async function chooseFeatured(id) {
 }
 window.chooseFeatured = chooseFeatured;
 
-async function loadHeroBgSetting() {
-  try {
-    const url = await getSetting("hero_bg");
-    const box = document.getElementById("hero-bg-preview-box");
-    const btnRemove = document.getElementById("btn-remove-bg");
-    if (!box) return;
-    if (url && url.trim() !== "") {
-      box.outerHTML = `<img id="hero-bg-preview-box" class="hero-bg-preview" src="${url}" alt="Fundo atual">`;
-      if (btnRemove) btnRemove.style.display = "inline-flex";
-    } else {
-      if (btnRemove) btnRemove.style.display = "none";
-    }
-  } catch(e) {}
-}
-
-async function handleHeroBgUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const btn = document.querySelector(".settings-section .btn-primary");
-  btn.textContent = "Fazendo upload...";
-  btn.disabled = true;
-  try {
-    const url = await uploadImage(file);
-    await updateSetting("hero_bg", url);
-    const box = document.getElementById("hero-bg-preview-box");
-    if (box) {
-      const img = document.createElement("img");
-      img.id = "hero-bg-preview-box";
-      img.className = "hero-bg-preview";
-      img.src = url;
-      img.alt = "Fundo atual";
-      box.replaceWith(img);
-    }
-    const btnRemove = document.getElementById("btn-remove-bg");
-    if (btnRemove) btnRemove.style.display = "inline-flex";
-    alert("Fundo atualizado!");
-  } catch(err) {
-    alert("Erro ao fazer upload: " + err.message);
-  } finally {
-    btn.textContent = "Upload de imagem";
-    btn.disabled = false;
-    e.target.value = "";
-  }
-}
-
-async function removeHeroBg() {
-  if (!confirm("Remover a imagem de fundo?")) return;
-  try {
-    await updateSetting("hero_bg", "");
-    const box = document.getElementById("hero-bg-preview-box");
-    if (box) {
-      const div = document.createElement("div");
-      div.id = "hero-bg-preview-box";
-      div.className = "hero-bg-default";
-      div.textContent = "Grid padrão (default)";
-      box.replaceWith(div);
-    }
-    const btnRemove = document.getElementById("btn-remove-bg");
-    if (btnRemove) btnRemove.style.display = "none";
-    alert("Fundo removido.");
-  } catch(err) {
-    alert("Erro: " + err.message);
-  }
-}
-
-window.handleHeroBgUpload = handleHeroBgUpload;
-window.removeHeroBg = removeHeroBg;
-
 function formatPrice(value) {
   return Number(value || 0).toFixed(2).replace(".", ",");
 }
@@ -406,10 +338,6 @@ document.addEventListener("click", (e) => {
   if (e.target.classList.contains("modal-overlay")) {
     e.target.classList.remove("open");
   }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadHeroBgSetting();
 });
 
 let _heroBgBase64 = null;
@@ -431,7 +359,7 @@ function onHeroBgSelected(input) {
 async function saveHeroBg() {
   if (!_heroBgBase64) { alert("Selecione uma imagem primeiro."); return; }
   try {
-    await saveSetting("hero_bg", _heroBgBase64);
+    await updateSetting("hero_bg", _heroBgBase64);
     alert("Fundo salvo com sucesso!");
   } catch(e) {
     alert("Erro ao salvar: " + e.message);
@@ -441,7 +369,7 @@ async function saveHeroBg() {
 async function removeHeroBg() {
   if (!confirm("Remover a imagem de fundo?")) return;
   try {
-    await saveSetting("hero_bg", "");
+    await updateSetting("hero_bg", "");
     document.getElementById("hero-bg-preview").style.display = "none";
     document.getElementById("hero-bg-default").style.display = "flex";
     document.getElementById("hero-bg-filename").textContent = "";
