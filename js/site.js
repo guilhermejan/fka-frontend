@@ -4,6 +4,16 @@ let nextId = 1;
 const WHATSAPP_LINK = "https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD";
 const MOBILE_BREAKPOINT = 640;
 
+/* ============================================================
+   ESTADO DOS FILTROS
+   ============================================================ */
+const _filterState = {
+  category: "all",    // "all" ou o valor exato de p.cat
+  sort: "relevance",  // "relevance" | "price-asc" | "price-desc"
+  minPrice: null,     // número ou null (sem limite definido pelo usuário)
+  maxPrice: null
+};
+
 function isMobileView() {
   return window.innerWidth <= MOBILE_BREAKPOINT;
 }
@@ -332,29 +342,238 @@ function updateActiveDot() {
 }
 
 /* ============================================================
-   RENDER PRINCIPAL — decide entre carrossel mobile e grid desktop
+   FILTROS — categorias dinâmicas, ordenação por preço, slider
+   ============================================================ */
+
+function getUniqueCategories(activeProducts) {
+  const set = new Set();
+  activeProducts.forEach(p => {
+    const cat = (p.cat || "").trim();
+    if (cat) set.add(cat);
+  });
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"));
+}
+
+function getPriceBounds(activeProducts) {
+  if (!activeProducts.length) return { min: 0, max: 0 };
+  let min = Infinity, max = -Infinity;
+  activeProducts.forEach(p => {
+    const price = Number(p.price) || 0;
+    if (price < min) min = price;
+    if (price > max) max = price;
+  });
+  if (min === Infinity) { min = 0; max = 0; }
+  return { min: Math.floor(min), max: Math.ceil(max) };
+}
+
+function applyFilters(activeProducts) {
+  let result = activeProducts.slice();
+
+  if (_filterState.category !== "all") {
+    result = result.filter(p => (p.cat || "").trim() === _filterState.category);
+  }
+
+  if (_filterState.minPrice !== null) {
+    result = result.filter(p => Number(p.price) >= _filterState.minPrice);
+  }
+  if (_filterState.maxPrice !== null) {
+    result = result.filter(p => Number(p.price) <= _filterState.maxPrice);
+  }
+
+  if (_filterState.sort === "price-asc") {
+    result.sort((a, b) => Number(a.price) - Number(b.price));
+  } else if (_filterState.sort === "price-desc") {
+    result.sort((a, b) => Number(b.price) - Number(a.price));
+  }
+  // "relevance" mantém a ordem original (ordem de cadastro)
+
+  return result;
+}
+
+function renderFilterBar() {
+  const header = document.querySelector(".carousel-header");
+  if (!header) return;
+
+  const allActive = products.filter(p => p.active);
+  const categories = getUniqueCategories(allActive);
+  const { min: boundMin, max: boundMax } = getPriceBounds(allActive);
+
+  // sem produtos ou só 1 categoria e nenhuma faixa de preço útil: não exibe a barra
+  let bar = document.getElementById("filter-bar");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "filter-bar";
+    bar.className = "filter-bar";
+    header.insertAdjacentElement("afterend", bar);
+  }
+
+  if (allActive.length === 0) {
+    bar.innerHTML = "";
+    bar.style.display = "none";
+    return;
+  }
+  bar.style.display = "flex";
+
+  // mantém valores atuais do slider se já existirem e ainda fizerem sentido;
+  // senão, parte dos limites reais dos produtos
+  const curMin = _filterState.minPrice !== null ? _filterState.minPrice : boundMin;
+  const curMax = _filterState.maxPrice !== null ? _filterState.maxPrice : boundMax;
+
+  const catPillsHTML = [
+    `<button class="filter-pill${_filterState.category === "all" ? " active" : ""}" data-cat="all">Todos</button>`
+  ].concat(
+    categories.map(cat =>
+      `<button class="filter-pill${_filterState.category === cat ? " active" : ""}" data-cat="${escapeHTML(cat)}">${escapeHTML(cat)}</button>`
+    )
+  ).join("");
+
+  bar.innerHTML = `
+    <div class="filter-row filter-row-cats" id="filter-cats">${catPillsHTML}</div>
+    <div class="filter-row filter-row-sort">
+      <button class="filter-pill filter-pill-sort${_filterState.sort === "price-asc" ? " active" : ""}" data-sort="price-asc">
+        <i class="ti ti-sort-ascending-2"></i> Menor preço
+      </button>
+      <button class="filter-pill filter-pill-sort${_filterState.sort === "price-desc" ? " active" : ""}" data-sort="price-desc">
+        <i class="ti ti-sort-descending-2"></i> Maior preço
+      </button>
+      ${_filterState.sort !== "relevance" ? `<button class="filter-pill filter-pill-clear" id="filter-clear-sort">Limpar ordenação</button>` : ""}
+    </div>
+    ${boundMax > boundMin ? `
+    <div class="filter-row filter-row-price">
+      <div class="price-range-labels">
+        <span>Faixa de preço</span>
+        <span class="price-range-values">R$ ${Math.round(curMin)} — R$ ${Math.round(curMax)}</span>
+      </div>
+      <div class="price-range-slider">
+        <div class="price-range-fill" id="price-range-fill"></div>
+        <input type="range" id="price-min" min="${boundMin}" max="${boundMax}" value="${curMin}" step="1">
+        <input type="range" id="price-max" min="${boundMin}" max="${boundMax}" value="${curMax}" step="1">
+      </div>
+    </div>` : ""}
+  `;
+
+  // listeners — categoria
+  bar.querySelectorAll(".filter-pill[data-cat]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      _filterState.category = btn.dataset.cat;
+      renderCarousel(); // já re-renderiza a barra de filtros internamente
+    });
+  });
+
+  // listeners — ordenação (toggle: clicar de novo no mesmo volta pra relevância)
+  bar.querySelectorAll(".filter-pill-sort").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const sortVal = btn.dataset.sort;
+      _filterState.sort = (_filterState.sort === sortVal) ? "relevance" : sortVal;
+      renderCarousel();
+    });
+  });
+
+  const clearSortBtn = document.getElementById("filter-clear-sort");
+  if (clearSortBtn) {
+    clearSortBtn.addEventListener("click", () => {
+      _filterState.sort = "relevance";
+      renderCarousel();
+    });
+  }
+
+  // listeners — slider de preço (estilo marketplace: dois handles, min/max)
+  const minInput = document.getElementById("price-min");
+  const maxInput = document.getElementById("price-max");
+  if (minInput && maxInput) {
+    const valuesLabel = bar.querySelector(".price-range-values");
+    const fillBar = document.getElementById("price-range-fill");
+    const rangeSpan = boundMax - boundMin;
+
+    function updateFillBar() {
+      if (!fillBar || rangeSpan <= 0) return;
+      let lo = Number(minInput.value);
+      let hi = Number(maxInput.value);
+      if (lo > hi) { [lo, hi] = [hi, lo]; }
+      const pctLo = ((lo - boundMin) / rangeSpan) * 100;
+      const pctHi = ((hi - boundMin) / rangeSpan) * 100;
+      fillBar.style.left = pctLo + "%";
+      fillBar.style.width = (pctHi - pctLo) + "%";
+    }
+
+    function liveUpdateLabel() {
+      let lo = Number(minInput.value);
+      let hi = Number(maxInput.value);
+      if (lo > hi) { [lo, hi] = [hi, lo]; }
+      if (valuesLabel) valuesLabel.textContent = `R$ ${lo} — R$ ${hi}`;
+      updateFillBar();
+    }
+
+    function commitRange() {
+      let lo = Number(minInput.value);
+      let hi = Number(maxInput.value);
+      if (lo > hi) { [lo, hi] = [hi, lo]; }
+      _filterState.minPrice = lo;
+      _filterState.maxPrice = hi;
+      renderCarousel();
+    }
+
+    updateFillBar();
+
+    // feedback visual em tempo real (label + barra), mas só filtra a lista ao soltar
+    minInput.addEventListener("input", liveUpdateLabel);
+    maxInput.addEventListener("input", liveUpdateLabel);
+    minInput.addEventListener("change", commitRange);
+    maxInput.addEventListener("change", commitRange);
+  }
+}
+
+/* ============================================================
+   RENDER PRINCIPAL — filtros + decide carrossel mobile vs grid desktop
    ============================================================ */
 function renderCarousel(){
   const track = document.getElementById("carousel-track");
   if(!track) return;
-  const active = products.filter(p=>p.active);
 
-  if(!active.length){
+  const allActive = products.filter(p => p.active);
+
+  // a barra de filtros é montada/atualizada sempre que renderizamos,
+  // assim ela reflete corretamente o universo total de produtos ativos
+  renderFilterBar();
+
+  if (!allActive.length) {
     track.innerHTML = `<div style="padding:40px;color:#444;font-size:13px;text-align:center;width:100%">Nenhum produto ativo no momento.</div>`;
     const dotsWrap = document.getElementById("carousel-dots");
     if (dotsWrap) dotsWrap.innerHTML = "";
     return;
   }
 
+  const filtered = applyFilters(allActive);
+
+  if (!filtered.length) {
+    track.innerHTML = `
+      <div style="padding:40px 20px;color:#444;font-size:13px;text-align:center;width:100%">
+        Nenhum produto encontrado com esses filtros.
+        <br><button class="filter-pill" style="margin-top:12px" onclick="resetAllFilters()">Limpar filtros</button>
+      </div>`;
+    const dotsWrap = document.getElementById("carousel-dots");
+    if (dotsWrap) dotsWrap.innerHTML = "";
+    return;
+  }
+
   if (isMobileView()) {
-    renderMobileCarousel(track, active);
+    renderMobileCarousel(track, filtered);
   } else {
     // grid desktop: sem clones, sem dots, sem drag
-    track.innerHTML = active.map(p => buildCardHTML(p)).join("");
+    track.innerHTML = filtered.map(p => buildCardHTML(p)).join("");
     const dotsWrap = document.getElementById("carousel-dots");
     if (dotsWrap) dotsWrap.innerHTML = "";
   }
 }
+
+function resetAllFilters() {
+  _filterState.category = "all";
+  _filterState.sort = "relevance";
+  _filterState.minPrice = null;
+  _filterState.maxPrice = null;
+  renderCarousel();
+}
+window.resetAllFilters = resetAllFilters;
 
 function handleCardClick(e, id) {
   if (e.target.closest(".prod-wpp-btn")) return;
@@ -443,6 +662,18 @@ async function loadProductsFromAPI() {
   renderFeaturedSection();
   applyHeroBg();
 }
+
+/* ============================================================
+   FAQ — accordion (abre um, fecha os outros)
+   ============================================================ */
+function toggleFaq(btn) {
+  const item = btn.closest(".faq-item");
+  if (!item) return;
+  const isOpen = item.classList.contains("open");
+  document.querySelectorAll(".faq-item.open").forEach(el => el.classList.remove("open"));
+  if (!isOpen) item.classList.add("open");
+}
+window.toggleFaq = toggleFaq;
 
 document.addEventListener("DOMContentLoaded", async () => {
   _lastWasMobile = isMobileView();
