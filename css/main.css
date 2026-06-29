@@ -933,117 +933,31 @@
 }
 
 /* ============================================================
-   DESKTOP — carrossel com setas, cards preenchendo largura total
+   DESKTOP — grid, todos os produtos visíveis
    ============================================================ */
-
-@media (min-width: 641px) {
-  .carousel-section {
-    overflow: hidden;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  .carousel-outer {
-    position: relative;
-    overflow: visible;
-    padding: 4px 48px 16px;
-    width: 100%;
-    display: block;
-  }
-  .carousel-arrow {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-60%);
-    z-index: 10;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(10,8,5,.88);
-    border: 1px solid rgba(201,168,76,.35);
-    color: var(--gold-light);
-    font-size: 22px;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    transition: background .2s, border-color .2s;
-    padding: 0;
-    line-height: 1;
-  }
-  .carousel-arrow:hover {
-    background: rgba(201,168,76,.18);
-    border-color: rgba(201,168,76,.6);
-  }
-  .carousel-arrow-left  { left: 6px; }
-  .carousel-arrow-right { right: 6px; }
-  .carousel-track {
-    display: flex;
-    max-width: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 4px 0;
-    scroll-padding-left: 0;
-    gap: 14px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    cursor: grab;
-    justify-content: flex-start;
-    scrollbar-width: none;
-  }
-  .carousel-track::-webkit-scrollbar { display: none; }
-  .carousel-track.dragging { cursor: grabbing; }
-  .prod-card {
-    flex: 1 1 0;
-    min-width: 160px;
-    max-width: none;
-    width: 0;
-    scroll-snap-align: start;
-  }
-  .prod-card-img { height: 190px; }
-  .carousel-dots { display: none !important; }
-  .scroll-hint { display: none; }
-}
-
-@media (min-width: 1024px) {
-  .carousel-track { gap: 18px; }
-  .prod-card-img { height: 210px; }
-}
-
-/* ============================================================
-   MOBILE — cards menores
-   ============================================================ */
-@media (max-width: 640px) {
-  .carousel-arrow { display: none !important; }
-  .prod-card {
-    flex: 0 0 62vw;
-    max-width: 230px;
-  }
-  .prod-card-img { height: 130px; }
-  .prod-card-body { padding: 10px; }
-  .prod-card-name { font-size: 12px; }
-  .prod-price { font-size: 13px; }
-  .prod-wpp-btn { font-size: 10px; padding: 7px; }
-}
-
 @media (min-width: 641px) {
   .carousel-section {
     padding-left: 24px;
     padding-right: 24px;
+    overflow: visible;
   }
   .carousel-outer {
     overflow: visible;
     padding: 4px 0 16px;
     display: block;
     width: 100%;
+    position: static;
   }
   .carousel-track {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
-    overflow: visible;
+    overflow: visible !important;
     max-width: 100%;
     padding: 0;
     cursor: default;
     scroll-snap-type: none;
+    flex: none;
   }
   .carousel-track.dragging { cursor: default; }
   .prod-card {
@@ -1055,7 +969,7 @@
   }
   .prod-card-img { height: 190px; }
   .carousel-dots { display: none !important; }
-  .scroll-hint { display: none; }
+  .scroll-hint { display: none !important; }
   .carousel-arrow { display: none !important; }
 }
 
@@ -1065,4 +979,17 @@
     gap: 20px;
   }
   .prod-card-img { height: 210px; }
+}
+
+/* ============================================================
+   MOBILE — cards menores
+   ============================================================ */
+@media (max-width: 640px) {
+  .carousel-arrow { display: none !important; }
+  .prod-card { flex: 0 0 62vw; max-width: 230px; }
+  .prod-card-img { height: 130px; }
+  .prod-card-body { padding: 10px; }
+  .prod-card-name { font-size: 12px; }
+  .prod-price { font-size: 13px; }
+  .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
