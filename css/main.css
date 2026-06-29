@@ -950,7 +950,7 @@
   .carousel-track {
     display: grid !important;
     grid-template-columns: repeat(6, 1fr) !important;
-    gap: 14px;
+    gap: 20px;
     width: 100%;
     overflow: visible !important;
     cursor: default;
@@ -968,7 +968,7 @@
     scroll-snap-align: unset !important;
   }
 
-  .prod-card-img    { height: 210px; }
+  .prod-card-img    { height: 280px; }
   .carousel-dots    { display: none !important; }
   .scroll-hint      { display: none !important; }
   .carousel-arrow   { display: none !important; }
