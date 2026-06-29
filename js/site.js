@@ -2,6 +2,11 @@ let products = [];
 let nextId = 1;
 
 const WHATSAPP_LINK = "https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD";
+const MOBILE_BREAKPOINT = 640;
+
+function isMobileView() {
+  return window.innerWidth <= MOBILE_BREAKPOINT;
+}
 
 function parseImgs(raw) {
   if (!raw) return [];
@@ -36,12 +41,16 @@ function formatDesc(text) {
     .join("");
 }
 
+/* ============================================================
+   CARROSSEL MOBILE — drag to scroll
+   ============================================================ */
 (function(){
   let track, isDragging=false, startX=0, scrollLeft=0, dragMoved=false;
   document.addEventListener("DOMContentLoaded",()=>{
     track = document.getElementById("carousel-track");
     if(!track) return;
     track.addEventListener("mousedown", e=>{
+      if (!isMobileView()) return;
       isDragging=true; dragMoved=false;
       startX=e.pageX-track.offsetLeft;
       scrollLeft=track.scrollLeft;
@@ -50,7 +59,7 @@ function formatDesc(text) {
     track.addEventListener("mouseleave",()=>{isDragging=false;track.classList.remove("dragging")});
     track.addEventListener("mouseup",()=>{isDragging=false;track.classList.remove("dragging")});
     track.addEventListener("mousemove",e=>{
-      if(!isDragging)return;
+      if(!isDragging || !isMobileView())return;
       e.preventDefault();
       dragMoved=true;
       const x=e.pageX-track.offsetLeft;
@@ -59,7 +68,9 @@ function formatDesc(text) {
     track.addEventListener("scroll",()=>{
       const h=document.getElementById("scroll-hint");
       if(h)h.style.opacity="0";
-    },{ once:true });
+      if (isMobileView()) handleCarouselLoopScroll();
+      updateActiveDot();
+    });
   });
 })();
 
@@ -158,19 +169,16 @@ document.addEventListener("keydown", e => {
   }
 });
 
-function renderCarousel(){
-  const track = document.getElementById("carousel-track");
-  if(!track) return;
-  const active = products.filter(p=>p.active);
-  if(!active.length){
-    track.innerHTML = `<div style="padding:40px;color:#444;font-size:13px;text-align:center;width:100%">Nenhum produto ativo no momento.</div>`;
-    return;
-  }
-  track.innerHTML = active.map(p=>{
-    const imgs = parseImgs(p.img);
-    const thumb = imgs[0] || "";
-    return `
-    <div class="prod-card" onclick="handleCardClick(event,${p.id})">
+/* ============================================================
+   RENDER DO CARD (compartilhado entre mobile e desktop)
+   ============================================================ */
+function buildCardHTML(p, opts) {
+  opts = opts || {};
+  const imgs = parseImgs(p.img);
+  const thumb = imgs[0] || "";
+  const cloneAttr = opts.isClone ? ' data-clone="1" aria-hidden="true" tabindex="-1"' : "";
+  return `
+    <div class="prod-card" data-id="${p.id}"${cloneAttr} onclick="${opts.isClone ? "" : `handleCardClick(event,${p.id})`}">
       ${p.badge ? `<span class="prod-badge-new">${escapeHTML(p.badge)}</span>` : ""}
       ${thumb
         ? `<img class="prod-card-img" src="${thumb}" alt="${escapeHTML(p.name)}" draggable="false">`
@@ -189,17 +197,162 @@ function renderCarousel(){
         </button>
       </div>
     </div>`;
-  }).join("");
+}
 
-  if (window.innerWidth <= 640 && active.length > 1) {
-    requestAnimationFrame(() => {
-      const cards = track.querySelectorAll(".prod-card");
-      const second = cards[1];
-      if (second) {
-        const targetScroll = second.offsetLeft - (track.clientWidth - second.offsetWidth) / 2;
-        track.scrollLeft = Math.max(0, targetScroll);
-      }
-    });
+/* ============================================================
+   CARROSSEL MOBILE — loop infinito por clonagem + dots
+   ============================================================ */
+let _activeProducts = [];   // lista de produtos ativos, na ordem exibida
+let _realCardCount = 0;     // quantos cards "reais" existem (sem clones)
+let _loopGuard = false;     // evita reentrância no listener de scroll
+
+function renderMobileCarousel(track, active) {
+  _activeProducts = active;
+  _realCardCount = active.length;
+
+  if (active.length <= 1) {
+    // não precisa de loop/clones com 0 ou 1 produto
+    track.innerHTML = active.map(p => buildCardHTML(p)).join("");
+    renderCarouselDots(active, 0);
+    return;
+  }
+
+  const first = active[0];
+  const last  = active[active.length - 1];
+
+  const html =
+    buildCardHTML(last, { isClone: true }) +
+    active.map(p => buildCardHTML(p)).join("") +
+    buildCardHTML(first, { isClone: true });
+
+  track.innerHTML = html;
+  renderCarouselDots(active, 0);
+
+  // posiciona o scroll no primeiro card "real" (depois do clone do último)
+  requestAnimationFrame(() => {
+    const cards = track.querySelectorAll(".prod-card");
+    const realFirst = cards[1]; // index 0 é o clone do último
+    if (realFirst) {
+      track.scrollLeft = realFirst.offsetLeft - (track.clientWidth - realFirst.offsetWidth) / 2;
+    }
+  });
+}
+
+function handleCarouselLoopScroll() {
+  if (_loopGuard) return;
+  const track = document.getElementById("carousel-track");
+  if (!track || _realCardCount <= 1) return;
+
+  const cards = track.querySelectorAll(".prod-card");
+  if (cards.length < 3) return;
+
+  const firstCloneCard = cards[0];
+  const lastCloneCard  = cards[cards.length - 1];
+  const firstRealCard  = cards[1];
+  const lastRealCard    = cards[cards.length - 2];
+
+  const buffer = 4; // px de tolerância
+
+  // chegou no clone do começo (rolando pra esquerda) -> pula pro último real
+  if (track.scrollLeft <= firstCloneCard.offsetLeft + buffer) {
+    _loopGuard = true;
+    track.scrollLeft = lastRealCard.offsetLeft - (track.clientWidth - lastRealCard.offsetWidth) / 2;
+    requestAnimationFrame(() => { _loopGuard = false; });
+  }
+  // chegou no clone do fim (rolando pra direita) -> pula pro primeiro real
+  else if (track.scrollLeft + track.clientWidth >= lastCloneCard.offsetLeft + lastCloneCard.offsetWidth - buffer) {
+    _loopGuard = true;
+    track.scrollLeft = firstRealCard.offsetLeft - (track.clientWidth - firstRealCard.offsetWidth) / 2;
+    requestAnimationFrame(() => { _loopGuard = false; });
+  }
+}
+
+function renderCarouselDots(active, activeIndex) {
+  const outer = document.querySelector(".carousel-outer");
+  if (!outer) return;
+  let dotsWrap = document.getElementById("carousel-dots");
+  if (!dotsWrap) {
+    dotsWrap = document.createElement("div");
+    dotsWrap.id = "carousel-dots";
+    dotsWrap.className = "carousel-dots";
+    outer.insertAdjacentElement("afterend", dotsWrap);
+  }
+  if (active.length <= 1) {
+    dotsWrap.innerHTML = "";
+    return;
+  }
+  dotsWrap.innerHTML = active.map((_, i) =>
+    `<button class="carousel-dot${i === activeIndex ? " active" : ""}" aria-label="Ir para produto ${i+1}" onclick="goToCarouselDot(${i})"></button>`
+  ).join("");
+}
+
+function goToCarouselDot(index) {
+  const track = document.getElementById("carousel-track");
+  if (!track) return;
+  const cards = track.querySelectorAll(".prod-card");
+  // +1 porque o índice 0 é o clone do último
+  const target = cards[index + 1];
+  if (!target) return;
+  _loopGuard = true;
+  track.scrollTo({
+    left: target.offsetLeft - (track.clientWidth - target.offsetWidth) / 2,
+    behavior: "smooth"
+  });
+  setTimeout(() => { _loopGuard = false; updateActiveDot(); }, 350);
+}
+window.goToCarouselDot = goToCarouselDot;
+
+function updateActiveDot() {
+  if (!isMobileView() || _realCardCount <= 1) return;
+  const track = document.getElementById("carousel-track");
+  if (!track) return;
+  const cards = Array.from(track.querySelectorAll(".prod-card"));
+  if (cards.length < 3) return;
+
+  const trackCenter = track.scrollLeft + track.clientWidth / 2;
+  let closestRealIdx = 0;
+  let closestDist = Infinity;
+
+  // ignora o primeiro (clone do último) e o último (clone do primeiro)
+  for (let i = 1; i < cards.length - 1; i++) {
+    const card = cards[i];
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const dist = Math.abs(cardCenter - trackCenter);
+    if (dist < closestDist) {
+      closestDist = dist;
+      closestRealIdx = i - 1; // -1 pra compensar o clone na posição 0
+    }
+  }
+
+  const dotsWrap = document.getElementById("carousel-dots");
+  if (!dotsWrap) return;
+  dotsWrap.querySelectorAll(".carousel-dot").forEach((dot, i) => {
+    dot.classList.toggle("active", i === closestRealIdx);
+  });
+}
+
+/* ============================================================
+   RENDER PRINCIPAL — decide entre carrossel mobile e grid desktop
+   ============================================================ */
+function renderCarousel(){
+  const track = document.getElementById("carousel-track");
+  if(!track) return;
+  const active = products.filter(p=>p.active);
+
+  if(!active.length){
+    track.innerHTML = `<div style="padding:40px;color:#444;font-size:13px;text-align:center;width:100%">Nenhum produto ativo no momento.</div>`;
+    const dotsWrap = document.getElementById("carousel-dots");
+    if (dotsWrap) dotsWrap.innerHTML = "";
+    return;
+  }
+
+  if (isMobileView()) {
+    renderMobileCarousel(track, active);
+  } else {
+    // grid desktop: sem clones, sem dots, sem drag
+    track.innerHTML = active.map(p => buildCardHTML(p)).join("");
+    const dotsWrap = document.getElementById("carousel-dots");
+    if (dotsWrap) dotsWrap.innerHTML = "";
   }
 }
 
@@ -208,6 +361,22 @@ function handleCardClick(e, id) {
   openProdModal(id);
 }
 window.handleCardClick = handleCardClick;
+
+/* Re-renderiza ao trocar entre mobile/desktop (ex: girar o celular,
+   redimensionar a janela), evitando re-render a cada pixel de resize */
+let _lastWasMobile = null;
+let _resizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    const nowMobile = isMobileView();
+    if (_lastWasMobile === null) _lastWasMobile = nowMobile;
+    if (nowMobile !== _lastWasMobile) {
+      _lastWasMobile = nowMobile;
+      renderCarousel();
+    }
+  }, 150);
+});
 
 function renderFeaturedSection(){
   const section = document.getElementById("featured-section");
@@ -276,5 +445,6 @@ async function loadProductsFromAPI() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  _lastWasMobile = isMobileView();
   await loadProductsFromAPI();
 });

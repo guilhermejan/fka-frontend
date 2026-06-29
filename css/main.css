@@ -354,3 +354,63 @@
 .fka-stagger.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
 .fka-stagger.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
 .fka-stagger.visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+
+.carousel-dots {
+  display: none; /* só aparece em mobile, via media query abaixo */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.carousel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.22);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, width 0.25s, border-radius 0.25s;
+}
+.carousel-dot.active {
+  background: var(--gold-light);
+  width: 18px;
+  border-radius: 4px;
+}
+ 
+/* ---------- GRID DESKTOP (>= 641px) ---------- */
+/* Acima de 640px, o carrossel some e entra o grid */
+@media (min-width: 641px) {
+  .carousel-outer {
+    overflow: visible;
+    padding: 4px 0 0;
+  }
+  .carousel-track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    overflow: visible;
+    cursor: default;
+    justify-content: start;
+    max-width: 900px;
+  }
+  .carousel-track.dragging { cursor: default; }
+ 
+  .prod-card { flex: none; width: 100%; }
+ 
+  .scroll-hint { display: none; }
+  .carousel-dots { display: none !important; }
+}
+ 
+/* 4 colunas em telas maiores */
+@media (min-width: 1024px) {
+  .carousel-track {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 880px;
+  }
+}
+ 
+/* ---------- MOBILE: garante que os dots aparecem ---------- */
+@media (max-width: 640px) {
+  .carousel-dots { display: flex; }
+}
