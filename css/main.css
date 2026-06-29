@@ -937,53 +937,44 @@
    ============================================================ */
 @media (min-width: 641px) {
   .carousel-section {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 32px;
+    padding-right: 32px;
   }
 
   .carousel-outer {
+    overflow: visible !important;
     padding: 4px 0 16px;
-    display: flex;
-    justify-content: center;
     width: 100%;
-    overflow: hidden;
-    position: relative;
   }
 
   .carousel-track {
-    display: flex !important;
-    flex-wrap: nowrap;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 14px;
     width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+    overflow: visible !important;
+    cursor: default;
     padding: 4px 0;
-    cursor: grab;
+    /* zera tudo de flex/scroll */
+    flex-wrap: unset;
+    scroll-snap-type: unset;
+    overflow-x: unset;
   }
-
-  .carousel-track::-webkit-scrollbar { display: none; }
-  .carousel-track.dragging { cursor: grabbing; }
 
   .prod-card {
-    flex: 1 1 0;
-    min-width: 160px;
-    max-width: none;
-    width: 0;
-    scroll-snap-align: start;
+    flex: unset !important;
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    scroll-snap-align: unset !important;
   }
 
-  .prod-card-img { height: 210px; }
-  .carousel-dots  { display: none !important; }
-  .scroll-hint    { display: none !important; }
-  .carousel-arrow { display: none !important; }
+  .prod-card-img    { height: 210px; }
+  .carousel-dots    { display: none !important; }
+  .scroll-hint      { display: none !important; }
+  .carousel-arrow   { display: none !important; }
 }
 
-
-/* ============================================================
-   MOBILE — cards menores
-   ============================================================ */
 @media (max-width: 640px) {
   .carousel-arrow { display: none !important; }
   .prod-card { flex: 0 0 62vw; max-width: 230px; }
