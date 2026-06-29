@@ -1091,3 +1091,26 @@
     scroll-padding-left: 0;
   }
 }
+
+@media (min-width: 641px) {
+  .carousel-outer {
+    overflow: visible;
+    padding: 4px 48px 16px;
+  }
+  .carousel-section {
+    overflow: hidden;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .carousel-track {
+    padding: 0;
+    scroll-padding-left: 0;
+    justify-content: stretch;
+  }
+  .prod-card {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    width: 0;
+  }
+}
