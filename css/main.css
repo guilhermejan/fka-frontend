@@ -932,60 +932,56 @@
   .stat-label { font-size: 9px; }
 }
 
-/* ============================================================
-   DESKTOP — grid, todos os produtos visíveis
+ /* ============================================================
+   DESKTOP — 1 linha, produtos grandes, carrossel quando necessário
    ============================================================ */
 @media (min-width: 641px) {
   .carousel-section {
     padding-left: 24px;
     padding-right: 24px;
-    overflow: visible;
+    overflow: hidden;
   }
   .carousel-outer {
-    overflow: visible;
+    overflow: hidden;
     padding: 4px 0 16px;
     display: block;
     width: 100%;
-    position: static;
+    position: relative;
   }
   .carousel-track {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex !important;
+    flex-wrap: nowrap;
     gap: 16px;
-    overflow: visible !important;
-    max-width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
     padding: 0;
-    cursor: default;
-    scroll-snap-type: none;
-    flex: none;
+    cursor: grab;
   }
-  .carousel-track.dragging { cursor: default; }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-track.dragging { cursor: grabbing; }
   .prod-card {
-    flex: none;
-    width: 100%;
-    min-width: 0;
+    flex: 1 1 0;
+    min-width: 180px;
     max-width: none;
-    scroll-snap-align: none;
+    width: 0;
+    scroll-snap-align: start;
   }
-  .prod-card-img { height: 190px; }
+  .prod-card-img { height: 200px; }
   .carousel-dots { display: none !important; }
   .scroll-hint { display: none !important; }
   .carousel-arrow { display: none !important; }
 }
 
 @media (min-width: 1024px) {
-  .carousel-track {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-  }
-  .prod-card-img { height: 210px; }
+  .prod-card { min-width: 200px; }
+  .prod-card-img { height: 220px; }
 }
 
 /* ============================================================
    MOBILE — cards menores
    ============================================================ */
 @media (max-width: 640px) {
-  .carousel-arrow { display: none !important; }
   .prod-card { flex: 0 0 62vw; max-width: 230px; }
   .prod-card-img { height: 130px; }
   .prod-card-body { padding: 10px; }
