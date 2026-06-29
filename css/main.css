@@ -377,52 +377,7 @@
   width: 18px;
   border-radius: 4px;
 }
- 
-/* ---------- GRID DESKTOP (>= 641px) ---------- */
-/* Acima de 640px, o carrossel some e entra o grid */
-@media (min-width: 641px) {
-  .carousel-outer {
-    overflow: hidden;
-    padding: 4px 0 16px;
-  }
-  .carousel-track {
-    display: flex;
-    grid-template-columns: unset;
-    gap: 16px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    cursor: grab;
-    justify-content: flex-start;
-    padding: 0 40px;
-    scroll-padding-left: 40px;
-    max-width: 100%;
-  }
-  .carousel-track.dragging { cursor: grabbing; }
-
-  .prod-card {
-    flex: 0 0 260px;
-    width: 260px;
-    scroll-snap-align: start;
-  }
-  .prod-card-img { height: 200px; }
-
-  .scroll-hint { display: flex; }
-  .carousel-dots { display: none !important; }
-}
-
-@media (min-width: 1024px) {
-  .prod-card {
-    flex: 0 0 280px;
-    width: 280px;
-  }
-  .prod-card-img { height: 220px; }
-  .carousel-track {
-    padding: 0 60px;
-    scroll-padding-left: 60px;
-    gap: 20px;
-  }
-}
- 
+  
 /* ---------- MOBILE: garante que os dots aparecem ---------- */
 @media (max-width: 640px) {
   .carousel-dots { display: flex; }
