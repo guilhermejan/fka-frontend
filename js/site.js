@@ -250,28 +250,21 @@ function renderFeaturedSection(){
 
 async function applyHeroBg() {
   try {
-    const url = await getSetting("hero_bg");
+    const isMobile = window.innerWidth <= 640;
+    const key = isMobile ? "hero_bg_mobile" : "hero_bg_desktop";
+    const url = await getSetting(key);
     const hero = document.querySelector(".hero");
     if (!hero) return;
     if (url && url.trim() !== "") {
       hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('${url}')`;
       hero.style.backgroundSize = "cover";
       hero.style.backgroundPosition = "center";
-      const grid = hero.querySelector(".hero-grid");
-      const glow = hero.querySelector(".hero-glow");
-      if (grid) grid.style.display = "none";
-      if (glow) glow.style.display = "none";
     } else {
       hero.style.backgroundImage = "";
       hero.style.backgroundSize = "";
       hero.style.backgroundPosition = "";
-      const grid = hero.querySelector(".hero-grid");
-      const glow = hero.querySelector(".hero-glow");
-      if (grid) grid.style.display = "";
-      if (glow) glow.style.display = "";
     }
-  } catch(e) {
-  }
+  } catch(e) {}
 }
 
 async function loadProductsFromAPI() {
