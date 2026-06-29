@@ -1025,13 +1025,6 @@
 }
 
 @media (min-width: 641px) {
-  .carousel-track {
-    justify-content: flex-start !important;
-    max-width: 100% !important;
-  }
-}
-
-@media (min-width: 641px) {
   .carousel-outer {
     display: flex;
     align-items: center;
@@ -1039,5 +1032,6 @@
   }
   .carousel-track {
     justify-content: center;
+    max-width: 100%;
   }
 }
