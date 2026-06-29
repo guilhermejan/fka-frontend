@@ -126,26 +126,46 @@
   <div class="section-header">
     <div>
       <h2>Imagem de Fundo do Site</h2>
-      <p>Imagem exibida atrás do título principal</p>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn-primary" onclick="saveHeroBg()">Salvar Fundo</button>
-      <button class="btn-logout" onclick="removeHeroBg()">Remover Fundo</button>
+      <p>Imagens exibidas atrás do título principal</p>
     </div>
   </div>
-  <div id="hero-bg-preview-wrap">
-    <div class="hero-bg-default" id="hero-bg-default">Sem imagem de fundo</div>
-    <img id="hero-bg-preview" class="hero-bg-preview" style="display:none" src="" alt="">
+
+  <!-- Desktop -->
+  <div style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-size:13px;font-weight:600;color:var(--text-dim)">🖥️ Desktop</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveHeroBg('desktop')">Salvar</button>
+        <button class="btn-logout" onclick="removeHeroBg('desktop')">Remover</button>
+      </div>
+    </div>
+    <div id="hero-bg-default-desktop" class="hero-bg-default">Sem imagem de fundo</div>
+    <img id="hero-bg-preview-desktop" class="hero-bg-preview" style="display:none" src="" alt="">
+    <div style="margin-top:10px">
+      <input type="file" id="hero-bg-file-desktop" accept="image/*" style="display:none" onchange="onHeroBgSelected(this,'desktop')">
+      <button class="btn-outline" onclick="document.getElementById('hero-bg-file-desktop').click()">📁 Escolher imagem</button>
+      <span id="hero-bg-filename-desktop" style="font-size:12px;color:var(--text-faint);margin-left:10px"></span>
+    </div>
   </div>
-  <div style="margin-top:12px">
-    <input type="file" id="hero-bg-file" accept="image/*" style="display:none" onchange="onHeroBgSelected(this)">
-    <button class="btn-outline" onclick="document.getElementById('hero-bg-file').click()">
-      📁 Escolher imagem
-    </button>
-    <span id="hero-bg-filename" style="font-size:12px;color:var(--text-faint);margin-left:10px"></span>
+
+  <!-- Mobile -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-size:13px;font-weight:600;color:var(--text-dim)">📱 Mobile</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveHeroBg('mobile')">Salvar</button>
+        <button class="btn-logout" onclick="removeHeroBg('mobile')">Remover</button>
+      </div>
+    </div>
+    <div id="hero-bg-default-mobile" class="hero-bg-default">Sem imagem de fundo</div>
+    <img id="hero-bg-preview-mobile" class="hero-bg-preview" style="display:none" src="" alt="">
+    <div style="margin-top:10px">
+      <input type="file" id="hero-bg-file-mobile" accept="image/*" style="display:none" onchange="onHeroBgSelected(this,'mobile')">
+      <button class="btn-outline" onclick="document.getElementById('hero-bg-file-mobile').click()">📁 Escolher imagem</button>
+      <span id="hero-bg-filename-mobile" style="font-size:12px;color:var(--text-faint);margin-left:10px"></span>
+    </div>
   </div>
 </section>
-
 
   <section class="featured-section">
     <div class="section-header">
