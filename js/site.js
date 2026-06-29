@@ -8,9 +8,9 @@ const MOBILE_BREAKPOINT = 640;
    ESTADO DOS FILTROS
    ============================================================ */
 const _filterState = {
-  category: "all",    // "all" ou o valor exato de p.cat
-  sort: "relevance",  // "relevance" | "price-asc" | "price-desc"
-  minPrice: null,     // número ou null (sem limite definido pelo usuário)
+  category: "all",
+  sort: "relevance",
+  minPrice: null,
   maxPrice: null
 };
 
@@ -180,7 +180,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ============================================================
-   RENDER DO CARD (compartilhado entre mobile e desktop)
+   RENDER DO CARD
    ============================================================ */
 function buildCardHTML(p, opts) {
   opts = opts || {};
@@ -212,16 +212,15 @@ function buildCardHTML(p, opts) {
 /* ============================================================
    CARROSSEL MOBILE — loop infinito por clonagem + dots
    ============================================================ */
-let _activeProducts = [];   // lista de produtos ativos, na ordem exibida
-let _realCardCount = 0;     // quantos cards "reais" existem (sem clones)
-let _loopGuard = false;     // evita reentrância no listener de scroll
+let _activeProducts = [];
+let _realCardCount = 0;
+let _loopGuard = false;
 
 function renderMobileCarousel(track, active) {
   _activeProducts = active;
   _realCardCount = active.length;
 
   if (active.length <= 1) {
-    // não precisa de loop/clones com 0 ou 1 produto
     track.innerHTML = active.map(p => buildCardHTML(p)).join("");
     renderCarouselDots(active, 0);
     return;
@@ -238,10 +237,9 @@ function renderMobileCarousel(track, active) {
   track.innerHTML = html;
   renderCarouselDots(active, 0);
 
-  // posiciona o scroll no primeiro card "real" (depois do clone do último)
   requestAnimationFrame(() => {
     const cards = track.querySelectorAll(".prod-card");
-    const realFirst = cards[1]; // index 0 é o clone do último
+    const realFirst = cards[1];
     if (realFirst) {
       track.scrollLeft = realFirst.offsetLeft - (track.clientWidth - realFirst.offsetWidth) / 2;
     }
@@ -259,18 +257,14 @@ function handleCarouselLoopScroll() {
   const firstCloneCard = cards[0];
   const lastCloneCard  = cards[cards.length - 1];
   const firstRealCard  = cards[1];
-  const lastRealCard    = cards[cards.length - 2];
+  const lastRealCard   = cards[cards.length - 2];
+  const buffer = 4;
 
-  const buffer = 4; // px de tolerância
-
-  // chegou no clone do começo (rolando pra esquerda) -> pula pro último real
   if (track.scrollLeft <= firstCloneCard.offsetLeft + buffer) {
     _loopGuard = true;
     track.scrollLeft = lastRealCard.offsetLeft - (track.clientWidth - lastRealCard.offsetWidth) / 2;
     requestAnimationFrame(() => { _loopGuard = false; });
-  }
-  // chegou no clone do fim (rolando pra direita) -> pula pro primeiro real
-  else if (track.scrollLeft + track.clientWidth >= lastCloneCard.offsetLeft + lastCloneCard.offsetWidth - buffer) {
+  } else if (track.scrollLeft + track.clientWidth >= lastCloneCard.offsetLeft + lastCloneCard.offsetWidth - buffer) {
     _loopGuard = true;
     track.scrollLeft = firstRealCard.offsetLeft - (track.clientWidth - firstRealCard.offsetWidth) / 2;
     requestAnimationFrame(() => { _loopGuard = false; });
@@ -300,7 +294,6 @@ function goToCarouselDot(index) {
   const track = document.getElementById("carousel-track");
   if (!track) return;
   const cards = track.querySelectorAll(".prod-card");
-  // +1 porque o índice 0 é o clone do último
   const target = cards[index + 1];
   if (!target) return;
   _loopGuard = true;
@@ -323,14 +316,13 @@ function updateActiveDot() {
   let closestRealIdx = 0;
   let closestDist = Infinity;
 
-  // ignora o primeiro (clone do último) e o último (clone do primeiro)
   for (let i = 1; i < cards.length - 1; i++) {
     const card = cards[i];
     const cardCenter = card.offsetLeft + card.offsetWidth / 2;
     const dist = Math.abs(cardCenter - trackCenter);
     if (dist < closestDist) {
       closestDist = dist;
-      closestRealIdx = i - 1; // -1 pra compensar o clone na posição 0
+      closestRealIdx = i - 1;
     }
   }
 
@@ -342,9 +334,8 @@ function updateActiveDot() {
 }
 
 /* ============================================================
-   FILTROS — categorias dinâmicas, ordenação por preço, slider
+   FILTROS
    ============================================================ */
-
 function getUniqueCategories(activeProducts) {
   const set = new Set();
   activeProducts.forEach(p => {
@@ -372,50 +363,88 @@ function applyFilters(activeProducts) {
   if (_filterState.category !== "all") {
     result = result.filter(p => (p.cat || "").trim() === _filterState.category);
   }
-
   if (_filterState.minPrice !== null) {
     result = result.filter(p => Number(p.price) >= _filterState.minPrice);
   }
   if (_filterState.maxPrice !== null) {
     result = result.filter(p => Number(p.price) <= _filterState.maxPrice);
   }
-
   if (_filterState.sort === "price-asc") {
     result.sort((a, b) => Number(a.price) - Number(b.price));
   } else if (_filterState.sort === "price-desc") {
     result.sort((a, b) => Number(b.price) - Number(a.price));
   }
-  // "relevance" mantém a ordem original (ordem de cadastro)
 
   return result;
+}
+
+function hasActiveFilters() {
+  return _filterState.category !== "all"
+    || _filterState.sort !== "relevance"
+    || _filterState.minPrice !== null
+    || _filterState.maxPrice !== null;
+}
+
+/* ============================================================
+   BOTÃO FILTRAR + PAINEL COLAPSÁVEL
+   ============================================================ */
+function renderFilterToggle() {
+  const header = document.querySelector(".carousel-header");
+  if (!header) return;
+
+  // cria o botão só uma vez
+  let btn = document.getElementById("filter-toggle-btn");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id = "filter-toggle-btn";
+    btn.className = "btn-filter-toggle";
+    btn.innerHTML = `<i class="ti ti-adjustments-horizontal"></i> Filtrar`;
+    btn.addEventListener("click", () => {
+      const bar = document.getElementById("filter-bar");
+      if (!bar) return;
+      const isOpen = bar.classList.contains("filter-bar-open");
+      bar.classList.toggle("filter-bar-open", !isOpen);
+      btn.classList.toggle("active", !isOpen);
+    });
+    // insere logo abaixo do carousel-header
+    header.insertAdjacentElement("afterend", btn);
+  }
+
+  // deixa o botão com destaque se houver filtros ativos
+  btn.classList.toggle("has-filters", hasActiveFilters());
 }
 
 function renderFilterBar() {
   const header = document.querySelector(".carousel-header");
   if (!header) return;
 
+  // garante que o botão existe
+  renderFilterToggle();
+
   const allActive = products.filter(p => p.active);
   const categories = getUniqueCategories(allActive);
   const { min: boundMin, max: boundMax } = getPriceBounds(allActive);
 
-  // sem produtos ou só 1 categoria e nenhuma faixa de preço útil: não exibe a barra
+  // cria a barra só uma vez, inserida depois do botão
   let bar = document.getElementById("filter-bar");
+  const toggleBtn = document.getElementById("filter-toggle-btn");
   if (!bar) {
     bar = document.createElement("div");
     bar.id = "filter-bar";
     bar.className = "filter-bar";
-    header.insertAdjacentElement("afterend", bar);
+    // insere depois do botão de toggle
+    if (toggleBtn) {
+      toggleBtn.insertAdjacentElement("afterend", bar);
+    } else {
+      header.insertAdjacentElement("afterend", bar);
+    }
   }
 
   if (allActive.length === 0) {
     bar.innerHTML = "";
-    bar.style.display = "none";
     return;
   }
-  bar.style.display = "flex";
 
-  // mantém valores atuais do slider se já existirem e ainda fizerem sentido;
-  // senão, parte dos limites reais dos produtos
   const curMin = _filterState.minPrice !== null ? _filterState.minPrice : boundMin;
   const curMax = _filterState.maxPrice !== null ? _filterState.maxPrice : boundMax;
 
@@ -436,7 +465,7 @@ function renderFilterBar() {
       <button class="filter-pill filter-pill-sort${_filterState.sort === "price-desc" ? " active" : ""}" data-sort="price-desc">
         <i class="ti ti-sort-descending-2"></i> Maior preço
       </button>
-      ${_filterState.sort !== "relevance" ? `<button class="filter-pill filter-pill-clear" id="filter-clear-sort">Limpar ordenação</button>` : ""}
+      ${_filterState.sort !== "relevance" ? `<button class="filter-pill filter-pill-clear" id="filter-clear-sort">Limpar</button>` : ""}
     </div>
     ${boundMax > boundMin ? `
     <div class="filter-row filter-row-price">
@@ -450,17 +479,18 @@ function renderFilterBar() {
         <input type="range" id="price-max" min="${boundMin}" max="${boundMax}" value="${curMax}" step="1">
       </div>
     </div>` : ""}
+    ${hasActiveFilters() ? `<div class="filter-row"><button class="filter-pill filter-pill-clear" onclick="resetAllFilters()"><i class="ti ti-x"></i> Limpar todos</button></div>` : ""}
   `;
 
   // listeners — categoria
   bar.querySelectorAll(".filter-pill[data-cat]").forEach(btn => {
     btn.addEventListener("click", () => {
       _filterState.category = btn.dataset.cat;
-      renderCarousel(); // já re-renderiza a barra de filtros internamente
+      renderCarousel();
     });
   });
 
-  // listeners — ordenação (toggle: clicar de novo no mesmo volta pra relevância)
+  // listeners — ordenação
   bar.querySelectorAll(".filter-pill-sort").forEach(btn => {
     btn.addEventListener("click", () => {
       const sortVal = btn.dataset.sort;
@@ -477,7 +507,7 @@ function renderFilterBar() {
     });
   }
 
-  // listeners — slider de preço (estilo marketplace: dois handles, min/max)
+  // slider de preço
   const minInput = document.getElementById("price-min");
   const maxInput = document.getElementById("price-max");
   if (minInput && maxInput) {
@@ -514,8 +544,6 @@ function renderFilterBar() {
     }
 
     updateFillBar();
-
-    // feedback visual em tempo real (label + barra), mas só filtra a lista ao soltar
     minInput.addEventListener("input", liveUpdateLabel);
     maxInput.addEventListener("input", liveUpdateLabel);
     minInput.addEventListener("change", commitRange);
@@ -524,17 +552,25 @@ function renderFilterBar() {
 }
 
 /* ============================================================
-   RENDER PRINCIPAL — filtros + decide carrossel mobile vs grid desktop
+   RENDER PRINCIPAL
    ============================================================ */
-function renderCarousel(){
+function renderCarousel() {
   const track = document.getElementById("carousel-track");
-  if(!track) return;
+  if (!track) return;
 
   const allActive = products.filter(p => p.active);
 
-  // a barra de filtros é montada/atualizada sempre que renderizamos,
-  // assim ela reflete corretamente o universo total de produtos ativos
+  // preserva o estado aberto/fechado do painel durante re-renders
+  const bar = document.getElementById("filter-bar");
+  const wasOpen = bar ? bar.classList.contains("filter-bar-open") : false;
+
   renderFilterBar();
+
+  // re-aplica o estado aberto se estava aberto antes do re-render
+  const newBar = document.getElementById("filter-bar");
+  if (newBar && wasOpen) newBar.classList.add("filter-bar-open");
+  const toggleBtn = document.getElementById("filter-toggle-btn");
+  if (toggleBtn && wasOpen) toggleBtn.classList.add("active");
 
   if (!allActive.length) {
     track.innerHTML = `<div style="padding:40px;color:#444;font-size:13px;text-align:center;width:100%">Nenhum produto ativo no momento.</div>`;
@@ -559,7 +595,6 @@ function renderCarousel(){
   if (isMobileView()) {
     renderMobileCarousel(track, filtered);
   } else {
-    // grid desktop: sem clones, sem dots, sem drag
     track.innerHTML = filtered.map(p => buildCardHTML(p)).join("");
     const dotsWrap = document.getElementById("carousel-dots");
     if (dotsWrap) dotsWrap.innerHTML = "";
@@ -581,8 +616,6 @@ function handleCardClick(e, id) {
 }
 window.handleCardClick = handleCardClick;
 
-/* Re-renderiza ao trocar entre mobile/desktop (ex: girar o celular,
-   redimensionar a janela), evitando re-render a cada pixel de resize */
 let _lastWasMobile = null;
 let _resizeTimer = null;
 window.addEventListener("resize", () => {
@@ -597,17 +630,17 @@ window.addEventListener("resize", () => {
   }, 150);
 });
 
-function renderFeaturedSection(){
+function renderFeaturedSection() {
   const section = document.getElementById("featured-section");
   const inner = document.getElementById("feat-inner");
   const title = document.getElementById("feat-title");
-  if(!section||!inner) return;
+  if (!section || !inner) return;
 
   let p = products.find(x => Number(x.featured) === 1 && x.active);
-  if(!p) p = products.find(x => x.active);
-  if(!p){ section.style.display="none"; return; }
+  if (!p) p = products.find(x => x.active);
+  if (!p) { section.style.display = "none"; return; }
 
-  section.style.display="block";
+  section.style.display = "block";
   title.textContent = p.name;
 
   const imgs = parseImgs(p.img);
@@ -621,13 +654,13 @@ function renderFeaturedSection(){
     <div class="featured-text">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
         <span style="background:rgba(201,168,76,.1);color:var(--gold);font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;border:1px solid rgba(201,168,76,.2);text-transform:uppercase;letter-spacing:.5px">${escapeHTML(p.cat)}</span>
-        ${p.badge?`<span style="background:var(--gold);color:#0a0a0a;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px">${escapeHTML(p.badge)}</span>`:""}
+        ${p.badge ? `<span style="background:var(--gold);color:#0a0a0a;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px">${escapeHTML(p.badge)}</span>` : ""}
       </div>
       <h2>${escapeHTML(p.name)}</h2>
       <p>${formatDesc(p.description || "Produto premium importado exclusivamente pela FKA Imports.")}</p>
       <div class="feat-badges" style="margin-bottom:18px">
         <span class="feat-badge">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
-        ${p.oldprice?`<span class="feat-badge" style="text-decoration:line-through;opacity:.5;border-color:transparent">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>`:""}
+        ${p.oldprice ? `<span class="feat-badge" style="text-decoration:line-through;opacity:.5;border-color:transparent">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>` : ""}
       </div>
       <a href="${WHATSAPP_LINK}" class="btn-gold" style="width:fit-content">
         <i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Consultar disponibilidade
@@ -664,7 +697,7 @@ async function loadProductsFromAPI() {
 }
 
 /* ============================================================
-   FAQ — accordion (abre um, fecha os outros)
+   FAQ — accordion
    ============================================================ */
 function toggleFaq(btn) {
   const item = btn.closest(".faq-item");
