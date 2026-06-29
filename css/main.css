@@ -382,31 +382,44 @@
 /* Acima de 640px, o carrossel some e entra o grid */
 @media (min-width: 641px) {
   .carousel-outer {
-    overflow: visible;
-    padding: 4px 0 0;
+    overflow: hidden;
+    padding: 4px 0 16px;
   }
   .carousel-track {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    overflow: visible;
-    cursor: default;
-    justify-content: start;
-    max-width: 900px;
+    display: flex;
+    grid-template-columns: unset;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    cursor: grab;
+    justify-content: flex-start;
+    padding: 0 40px;
+    scroll-padding-left: 40px;
+    max-width: 100%;
   }
-  .carousel-track.dragging { cursor: default; }
- 
-  .prod-card { flex: none; width: 100%; }
- 
-  .scroll-hint { display: none; }
+  .carousel-track.dragging { cursor: grabbing; }
+
+  .prod-card {
+    flex: 0 0 260px;
+    width: 260px;
+    scroll-snap-align: start;
+  }
+  .prod-card-img { height: 200px; }
+
+  .scroll-hint { display: flex; }
   .carousel-dots { display: none !important; }
 }
- 
-/* 4 colunas em telas maiores */
+
 @media (min-width: 1024px) {
+  .prod-card {
+    flex: 0 0 280px;
+    width: 280px;
+  }
+  .prod-card-img { height: 220px; }
   .carousel-track {
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 880px;
+    padding: 0 60px;
+    scroll-padding-left: 60px;
+    gap: 20px;
   }
 }
  
@@ -963,3 +976,101 @@
   .stat-num  { font-size: 18px; }
   .stat-label { font-size: 9px; }
 }
+
+.carousel-outer {
+  position: relative;
+}
+ 
+.carousel-arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(10,8,5,.85);
+  border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold-light);
+  font-size: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s, border-color .2s, transform .2s;
+  padding: 0;
+  line-height: 1;
+}
+.carousel-arrow:hover {
+  background: rgba(201,168,76,.15);
+  border-color: rgba(201,168,76,.6);
+  transform: translateY(-50%) scale(1.08);
+}
+.carousel-arrow-left  { left: 6px; }
+.carousel-arrow-right { right: 6px; }
+ 
+@media (min-width: 641px) {
+  .carousel-arrow { display: flex; }
+ 
+  /* track ocupa tudo sem padding lateral (as setas substituem) */
+  .carousel-track {
+    padding: 0 50px;
+    scroll-padding-left: 50px;
+    justify-content: flex-start;
+    scroll-snap-type: x mandatory;
+  }
+ 
+  /* cards maiores e uniformes */
+  .prod-card {
+    flex: 0 0 240px;
+    width: 240px;
+  }
+  .prod-card-img { height: 190px; }
+}
+ 
+@media (min-width: 1024px) {
+  .carousel-track {
+    padding: 0 56px;
+    scroll-padding-left: 56px;
+    gap: 18px;
+  }
+  .prod-card {
+    flex: 0 0 260px;
+    width: 260px;
+  }
+  .prod-card-img { height: 210px; }
+}
+ 
+@media (min-width: 1400px) {
+  .prod-card {
+    flex: 0 0 280px;
+    width: 280px;
+  }
+}
+
+@media (max-width: 640px) {
+  .prod-card {
+    flex: 0 0 62vw;
+    max-width: 230px;
+  }
+  .prod-card-img { height: 130px; }
+  .prod-card-body { padding: 10px; }
+  .prod-card-name { font-size: 12px; }
+  .prod-price { font-size: 13px; }
+  .prod-wpp-btn { font-size: 10px; padding: 7px; }
+}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

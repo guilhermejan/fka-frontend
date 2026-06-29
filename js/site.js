@@ -41,6 +41,16 @@ function formatDesc(text) {
     .join("");
 }
 
+function carouselNav(dir) {
+  const track = document.getElementById("carousel-track");
+  if (!track) return;
+  const card = track.querySelector(".prod-card");
+  if (!card) return;
+  const step = card.offsetWidth + 18; // largura do card + gap
+  track.scrollBy({ left: dir * step, behavior: "smooth" });
+}
+window.carouselNav = carouselNav;
+
 /* ============================================================
    CARROSSEL MOBILE — drag to scroll
    ============================================================ */
