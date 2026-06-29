@@ -72,7 +72,9 @@ async function setFeatured(productId, allProducts) {
 }
 
 async function getSetting(key) {
-  const response = await fetch(`${API_URL}/settings/${key}`);
+  const response = await fetch(`${API_URL}/settings/${key}`, {
+    headers: authHeaders()
+  });
   if (!response.ok) return "";
   const data = await response.json();
   return data.value || "";
