@@ -1023,3 +1023,10 @@
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
+
+@media (min-width: 641px) {
+  .carousel-track {
+    justify-content: flex-start !important;
+    max-width: 100% !important;
+  }
+}
