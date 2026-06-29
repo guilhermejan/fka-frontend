@@ -977,78 +977,93 @@
   .stat-label { font-size: 9px; }
 }
 
-.carousel-outer {
-  position: relative;
-}
- 
-.carousel-arrow {
-  display: none;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(10,8,5,.85);
-  border: 1px solid rgba(201,168,76,.3);
-  color: var(--gold-light);
-  font-size: 20px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  transition: background .2s, border-color .2s, transform .2s;
-  padding: 0;
-  line-height: 1;
-}
-.carousel-arrow:hover {
-  background: rgba(201,168,76,.15);
-  border-color: rgba(201,168,76,.6);
-  transform: translateY(-50%) scale(1.08);
-}
-.carousel-arrow-left  { left: 6px; }
-.carousel-arrow-right { right: 6px; }
- 
+/* ============================================================
+   DESKTOP — carrossel com setas, cards preenchendo largura total
+   ============================================================ */
+
 @media (min-width: 641px) {
-  .carousel-arrow { display: flex; }
- 
-  /* track ocupa tudo sem padding lateral (as setas substituem) */
-  .carousel-track {
-    padding: 0 50px;
-    scroll-padding-left: 50px;
-    justify-content: flex-start;
-    scroll-snap-type: x mandatory;
+
+  .carousel-section { padding-left: 0; padding-right: 0; }
+
+  .carousel-outer {
+    position: relative;
+    overflow: hidden;
+    padding: 4px 0 16px;
+    width: 100%;
+    display: block;
   }
- 
-  /* cards maiores e uniformes */
+
+  /* setas dentro do outer, sobre o track */
+  .carousel-arrow {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-60%);
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(10,8,5,.88);
+    border: 1px solid rgba(201,168,76,.35);
+    color: var(--gold-light);
+    font-size: 22px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, border-color .2s;
+    padding: 0;
+    line-height: 1;
+  }
+  .carousel-arrow:hover {
+    background: rgba(201,168,76,.18);
+    border-color: rgba(201,168,76,.6);
+  }
+  .carousel-arrow-left  { left: 12px; }
+  .carousel-arrow-right { right: 12px; }
+
+  /* track ocupa 100% com padding pras setas */
+  .carousel-track {
+    display: flex;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 4px 56px;
+    scroll-padding-left: 56px;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    cursor: grab;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-track.dragging { cursor: grabbing; }
+
+  /* cards se expandem pra preencher uniformemente */
   .prod-card {
-    flex: 0 0 240px;
-    width: 240px;
+    flex: 1 1 200px;
+    min-width: 180px;
+    max-width: 280px;
+    width: auto;
+    scroll-snap-align: start;
   }
   .prod-card-img { height: 190px; }
-}
- 
-@media (min-width: 1024px) {
-  .carousel-track {
-    padding: 0 56px;
-    scroll-padding-left: 56px;
-    gap: 18px;
-  }
-  .prod-card {
-    flex: 0 0 260px;
-    width: 260px;
-  }
-  .prod-card-img { height: 210px; }
-}
- 
-@media (min-width: 1400px) {
-  .prod-card {
-    flex: 0 0 280px;
-    width: 280px;
-  }
+
+  .carousel-dots { display: none !important; }
+  .scroll-hint { display: flex; }
 }
 
+@media (min-width: 1024px) {
+  .carousel-track { padding: 4px 60px; gap: 20px; }
+  .prod-card { min-width: 200px; max-width: 300px; }
+  .prod-card-img { height: 210px; }
+}
+
+/* ============================================================
+   MOBILE — cards menores
+   ============================================================ */
 @media (max-width: 640px) {
+  .carousel-arrow { display: none !important; }
   .prod-card {
     flex: 0 0 62vw;
     max-width: 230px;
@@ -1059,18 +1074,3 @@
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
