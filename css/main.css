@@ -1074,3 +1074,20 @@
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
+
+@media (min-width: 641px) {
+  .carousel-section {
+    overflow: hidden;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .carousel-outer {
+    overflow: visible;
+    padding-left: 56px;
+    padding-right: 56px;
+  }
+  .carousel-track {
+    padding: 4px 0;
+    scroll-padding-left: 0;
+  }
+}
