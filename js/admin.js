@@ -118,7 +118,6 @@ function initDropzone() {
     addFiles(files);
   });
 
-  // seletor de arquivo
   input.addEventListener("change", e => {
     const files = Array.from(e.target.files || []);
     addFiles(files);
@@ -150,7 +149,6 @@ function renderImgPreviews() {
         <button type="button" class="img-preview-remove" onclick="removeImgItem(${i})" title="Remover">&times;</button>
       </div>`;
   }).join("");
-
 
   if (zone) {
     zone.style.display = imgUrls.length >= 5 ? "none" : "flex";
@@ -196,7 +194,6 @@ function openProductModal(id) {
   }
 
   overlay.classList.add("open");
-  // inicializa dropzone depois do modal abrir
   setTimeout(() => {
     renderImgPreviews();
     initDropzone();
@@ -340,53 +337,60 @@ document.addEventListener("click", (e) => {
   }
 });
 
-let _heroBgBase64 = null;
+// ── HERO BG (desktop + mobile) ──────────────────────────────
 
-function onHeroBgSelected(input) {
+let _heroBgBase64 = { desktop: null, mobile: null };
+
+function onHeroBgSelected(input, type) {
   const file = input.files[0];
   if (!file) return;
-  document.getElementById("hero-bg-filename").textContent = file.name;
+  document.getElementById(`hero-bg-filename-${type}`).textContent = file.name;
   const reader = new FileReader();
   reader.onload = function(e) {
-    _heroBgBase64 = e.target.result;
-    document.getElementById("hero-bg-preview").src = _heroBgBase64;
-    document.getElementById("hero-bg-preview").style.display = "block";
-    document.getElementById("hero-bg-default").style.display = "none";
+    _heroBgBase64[type] = e.target.result;
+    document.getElementById(`hero-bg-preview-${type}`).src = e.target.result;
+    document.getElementById(`hero-bg-preview-${type}`).style.display = "block";
+    document.getElementById(`hero-bg-default-${type}`).style.display = "none";
   };
   reader.readAsDataURL(file);
 }
+window.onHeroBgSelected = onHeroBgSelected;
 
-async function saveHeroBg() {
-  if (!_heroBgBase64) { alert("Selecione uma imagem primeiro."); return; }
+async function saveHeroBg(type) {
+  if (!_heroBgBase64[type]) { alert("Selecione uma imagem primeiro."); return; }
   try {
-    await updateSetting("hero_bg", _heroBgBase64);
+    await updateSetting(`hero_bg_${type}`, _heroBgBase64[type]);
     alert("Fundo salvo com sucesso!");
   } catch(e) {
     alert("Erro ao salvar: " + e.message);
   }
 }
+window.saveHeroBg = saveHeroBg;
 
-async function removeHeroBg() {
+async function removeHeroBg(type) {
   if (!confirm("Remover a imagem de fundo?")) return;
   try {
-    await updateSetting("hero_bg", "");
-    document.getElementById("hero-bg-preview").style.display = "none";
-    document.getElementById("hero-bg-default").style.display = "flex";
-    document.getElementById("hero-bg-filename").textContent = "";
-    _heroBgBase64 = null;
+    await updateSetting(`hero_bg_${type}`, "");
+    document.getElementById(`hero-bg-preview-${type}`).style.display = "none";
+    document.getElementById(`hero-bg-default-${type}`).style.display = "flex";
+    document.getElementById(`hero-bg-filename-${type}`).textContent = "";
+    _heroBgBase64[type] = null;
     alert("Fundo removido!");
   } catch(e) {
     alert("Erro ao remover: " + e.message);
   }
 }
+window.removeHeroBg = removeHeroBg;
 
 async function loadHeroBgPreview() {
-  try {
-    const url = await getSetting("hero_bg");
-    if (url && url.trim()) {
-      document.getElementById("hero-bg-preview").src = url;
-      document.getElementById("hero-bg-preview").style.display = "block";
-      document.getElementById("hero-bg-default").style.display = "none";
-    }
-  } catch(e) {}
+  for (const type of ["desktop", "mobile"]) {
+    try {
+      const url = await getSetting(`hero_bg_${type}`);
+      if (url && url.trim()) {
+        document.getElementById(`hero-bg-preview-${type}`).src = url;
+        document.getElementById(`hero-bg-preview-${type}`).style.display = "block";
+        document.getElementById(`hero-bg-default-${type}`).style.display = "none";
+      }
+    } catch(e) {}
+  }
 }
