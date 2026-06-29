@@ -952,23 +952,27 @@
 
   .carousel-track {
     display: flex !important;
-    flex-wrap: wrap;          /* ← era nowrap + overflow-x: auto */
+    flex-wrap: nowrap;
     gap: 14px;
     width: 100%;
     max-width: 900px;
     justify-content: center;
-    overflow: visible;
-    padding: 4px 8px;
-    cursor: default;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    padding: 4px 8px;
+    cursor: grab;
   }
 
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-track.dragging { cursor: grabbing; }
+
   .prod-card {
-    flex: 1 1 196px;          /* ← cresce mas tem base real */
+    flex: 1 1 196px;
     min-width: 160px;
     max-width: 240px;
-    width: auto;              /* ← era 0 */
-    scroll-snap-align: unset;
+    width: auto;
+    scroll-snap-align: start;
   }
 
   .prod-card-img { height: 210px; }
@@ -988,9 +992,4 @@
   .prod-card-name { font-size: 12px; }
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
-}
-
-
-@media (max-width: 640px) {
-  .carousel-arrow { display: none !important; }
 }
