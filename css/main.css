@@ -949,13 +949,12 @@
 
   .carousel-track {
     display: grid !important;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, 1fr) !important;
     gap: 14px;
     width: 100%;
     overflow: visible !important;
     cursor: default;
     padding: 4px 0;
-    /* zera tudo de flex/scroll */
     flex-wrap: unset;
     scroll-snap-type: unset;
     overflow-x: unset;
@@ -964,7 +963,7 @@
   .prod-card {
     flex: unset !important;
     width: 100% !important;
-    min-width: unset !important;
+    min-width: 0 !important;
     max-width: unset !important;
     scroll-snap-align: unset !important;
   }
@@ -984,3 +983,4 @@
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
+
