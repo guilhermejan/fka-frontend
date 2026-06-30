@@ -1,11 +1,5 @@
-// admin-insights.js
 (function () {
   const API_URL = (window.API_URL || "https://fka-backend.onrender.com/api");
-
-  function authHeaders() {
-    const token = localStorage.getItem("token");
-    return { "Authorization": `Bearer ${token}` };
-  }
 
   const CHANNEL_LABELS = {
     "Direct": "Acesso direto",
@@ -57,7 +51,6 @@
     }).join("");
   }
 
-  // Gráfico de visitas por dia (SVG simples, sem dependências)
   function renderChart(containerId, data) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -85,14 +78,12 @@
     const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
     const areaD = `${pathD} L${points[points.length-1].x.toFixed(1)},${(PAD.top+innerH).toFixed(1)} L${points[0].x.toFixed(1)},${(PAD.top+innerH).toFixed(1)} Z`;
 
-    // Ticks do eixo Y
     const yTicks = [0, Math.round(maxVal/2), maxVal].map(val => {
       const y = PAD.top + innerH - (val / maxVal) * innerH;
       return `<text x="${PAD.left - 5}" y="${y.toFixed(1)}" text-anchor="end" dominant-baseline="middle" fill="#4a3f28" font-size="9">${val}</text>
               <line x1="${PAD.left}" y1="${y.toFixed(1)}" x2="${PAD.left + innerW}" y2="${y.toFixed(1)}" stroke="rgba(201,168,76,0.07)" stroke-width="1"/>`;
     }).join("");
 
-    // Labels do eixo X — mostra só o primeiro, meio e último para não poluir
     const xLabels = [0, Math.floor((data.length-1)/2), data.length-1]
       .filter((v, i, arr) => arr.indexOf(v) === i)
       .map(i => {
@@ -100,7 +91,6 @@
         return `<text x="${p.x.toFixed(1)}" y="${(PAD.top+innerH+14).toFixed(1)}" text-anchor="middle" fill="#4a3f28" font-size="9">${data[i].label}</text>`;
       }).join("");
 
-    // Dots e tooltips nativos via <title>
     const dots = points.map(p =>
       `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#c9a84c" stroke="#0f0c07" stroke-width="1.5" class="chart-dot">
         <title>${p.label}: ${p.value} visita${p.value !== 1 ? "s" : ""}</title>
@@ -125,7 +115,9 @@
   }
 
   async function fetchJSON(path) {
-    const res = await fetch(`${API_URL}${path}`, { headers: authHeaders() });
+    const res = await fetch(`${API_URL}${path}`, {
+      credentials: "include"
+    });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       throw new Error(body.error || `Erro ao buscar ${path}`);
@@ -133,11 +125,10 @@
     return res.json();
   }
 
-  // Converte valor do select para parâmetro da API
   function periodToParam(value) {
     if (value === "today") return "today";
     if (value === "yesterday") return "yesterday";
-    return value; // 7, 30, 90
+    return value;
   }
 
   async function loadInsights(periodValue) {
