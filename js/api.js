@@ -35,6 +35,15 @@ async function getProducts() {
     return await response.json();
 }
 
+async function getProductsAdmin() {
+    const response = await fetch(`${API_URL}/products/admin`, {
+        credentials: "include"
+    });
+    if (!response.ok) throw new Error("Falha ao buscar produtos");
+    return await response.json();
+}
+
+
 async function createProduct(product) {
     const response = await fetch(`${API_URL}/products`, {
         method: "POST",
@@ -152,3 +161,4 @@ window.getReviewsAdmin = getReviewsAdmin;
 window.createReview = createReview;
 window.updateReview = updateReview;
 window.deleteReview = deleteReview;
+window.getProductsAdmin = getProductsAdmin;
