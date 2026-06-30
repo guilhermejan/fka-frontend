@@ -668,6 +668,7 @@ async function loadProductsFromAPI() {
 document.addEventListener("DOMContentLoaded", async () => {
   _lastWasMobile = isMobileView();
   await loadProductsFromAPI();
+  loadReviewsSection();
 });
 
 function getInitials(name) {

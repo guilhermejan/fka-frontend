@@ -130,7 +130,6 @@ async function getReviews() {
   if (!response.ok) throw new Error("Falha ao buscar avaliações");
   return await response.json();
 }
-window.getReviews = getReviews;
 
 window.getReviews = getReviews;
 window.createReview = createReview;
