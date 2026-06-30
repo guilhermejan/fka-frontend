@@ -629,14 +629,14 @@ footer {
   <h1>Setup de elite.<br><span class="shimmer-text">Acesso exclusivo.</span></h1>
   <p>Teclados magnéticos, mouses de alto desempenho, headsets e acessórios importados direto para você.</p>
   <div class="hero-btns">
-    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-gold" onclick="trackWhatsappClick(null,'hero')"> </a><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Entrar no Grupo VIP</a>
+    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-gold" onclick="trackWhatsappClick(null,'hero')"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Entrar no Grupo VIP</a>
     <a href="#produtos" class="btn-outline"><i class="ti ti-keyboard" style="font-size:15px"></i>Ver Produtos</a>
   </div>
   <div class="hero-stats">
-    <div><div class="stat-num">100+</div><div class="stat-label">Clientes</div></div>
-    <div><div class="stat-num">100%</div><div class="stat-label">Satisfação</div></div>
-    <div><div class="stat-num">20</div><div class="stat-label">Produtos</div></div>
-    <div><div class="stat-num">5.0★</div><div class="stat-label">Avaliação</div></div>
+    <div><div class="stat-num" data-target="100" data-suffix="+">0+</div><div class="stat-label">Clientes</div></div>
+    <div><div class="stat-num" data-target="100" data-suffix="%">0%</div><div class="stat-label">Satisfação</div></div>
+    <div><div class="stat-num" data-target="20" data-suffix="">0</div><div class="stat-label">Produtos</div></div>
+    <div><div class="stat-num" data-target="5" data-decimal="1" data-suffix="★">0.0★</div><div class="stat-label">Avaliação</div></div>
   </div>
 </section>
 
@@ -895,10 +895,28 @@ function toggleFaq(btn) {
 
 function animateCounters() {
   document.querySelectorAll('.stat-num').forEach(el => {
-    el.classList.add('counting');
-    el.addEventListener('animationend', () => el.classList.remove('counting'), { once: true });
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const decimals = parseInt(el.dataset.decimal || '0', 10);
+    const duration = 1400;
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = target * eased;
+      el.textContent = current.toFixed(decimals) + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = target.toFixed(decimals) + suffix;
+      }
+    }
+    requestAnimationFrame(tick);
   });
 }
+
 
 const introEl = document.getElementById('fka-intro');
 const introWaitTime = introEl ? 2900 : 0;
