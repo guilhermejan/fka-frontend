@@ -29,7 +29,7 @@ window.logout = logout;
 async function loadProducts() {
   const tbody = document.getElementById("products-table");
   try {
-    allProducts = await getProducts();
+    allProducts = await getProductsAdmin();
   } catch (error) {
     console.error("Erro buscando produtos:", error);
     tbody.innerHTML = `<tr><td colspan="7" class="empty-row">Erro ao carregar produtos.</td></tr>`;
@@ -317,7 +317,7 @@ window.closeFeaturedModal = closeFeaturedModal;
 
 async function chooseFeatured(id) {
   try {
-    await setFeatured(id, allProducts);
+    await setFeatured(id);
     closeFeaturedModal();
     await loadProducts();
   } catch (error) {
