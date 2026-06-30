@@ -617,7 +617,7 @@ footer {
     <a href="#beneficios">Benefícios</a>
     <a href="#avaliacoes">Avaliações</a>
     <a href="#faq">Perguntas Frequentes</a>
-    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-nav"><i class="ti ti-brand-whatsapp" style="font-size:14px"></i>Grupo VIP</a>
+    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-nav" onclick="trackWhatsappClick(null,'nav')"><i class="ti ti-brand-whatsapp" style="font-size:14px"></i>Grupo VIP</a>
   </div>
 </nav>
 
@@ -629,7 +629,7 @@ footer {
   <h1>Setup de elite.<br><span class="shimmer-text">Acesso exclusivo.</span></h1>
   <p>Teclados magnéticos, mouses de alto desempenho, headsets e acessórios importados direto para você.</p>
   <div class="hero-btns">
-    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-gold"><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Entrar no Grupo VIP</a>
+    <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-gold" onclick="trackWhatsappClick(null,'hero')"> </a><i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Entrar no Grupo VIP</a>
     <a href="#produtos" class="btn-outline"><i class="ti ti-keyboard" style="font-size:15px"></i>Ver Produtos</a>
   </div>
   <div class="hero-stats">
@@ -773,7 +773,7 @@ footer {
       <div class="cta-perk"><i class="ti ti-message-circle"></i>Suporte direto com a equipe FKA</div>
     </div>
     <div class="cta-btns">
-      <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-wpp"><i class="ti ti-brand-whatsapp" style="font-size:17px"></i>Entrar no Grupo VIP</a>
+      <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD" class="btn-wpp" onclick="trackWhatsappClick(null,'cta_final')"> </a><i class="ti ti-brand-whatsapp" style="font-size:17px"></i>Entrar no Grupo VIP</a>
       <a href="#produtos" class="btn-catalog"><i class="ti ti-keyboard" style="font-size:16px"></i>Ver Produtos</a>
     </div>
   </div>
@@ -880,7 +880,8 @@ footer {
 <a href="https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD"
    class="wpp-float"
    target="_blank"
-   aria-label="Falar pelo WhatsApp">
+   aria-label="Falar pelo WhatsApp"
+   onclick="trackWhatsappClick(null,'float_button')">
   <i class="ti ti-brand-whatsapp"></i>
 </a>
 
@@ -953,9 +954,7 @@ function trackWhatsappClick(productName, source) {
   }
 }
 window.trackWhatsappClick = trackWhatsappClick;
-
 </script>
-
 <script src="js/api.js"></script>
 <script src="js/site.js"></script>
 </body>

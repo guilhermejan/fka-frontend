@@ -140,9 +140,10 @@ function openProdModal(id) {
         <span class="prod-modal-price">R$ ${Number(p.price).toLocaleString("pt-BR", {minimumFractionDigits:2})}</span>
         ${p.oldprice ? `<span class="prod-modal-oldprice">R$ ${Number(p.oldprice).toLocaleString("pt-BR", {minimumFractionDigits:2})}</span>` : ""}
       </div>
-      <a href="${WHATSAPP_LINK}" class="prod-modal-wpp" target="_blank">
+      <a href="${WHATSAPP_LINK}" class="prod-modal-wpp" target="_blank" onclick="trackWhatsappClick('${escapeHTML(p.name)}','modal')">
         <i class="ti ti-brand-whatsapp" style="font-size:18px"></i>
         Quero este produto
+      </a>
       </a>
     </div>
   `;
@@ -201,7 +202,7 @@ function buildCardHTML(p, opts) {
           <span class="prod-price">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
           ${p.oldprice ? `<span class="prod-oldprice">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>` : ""}
         </div>
-        <button class="prod-wpp-btn" onclick="event.stopPropagation();window.open('${WHATSAPP_LINK}')">
+        <button class="prod-wpp-btn" onclick="event.stopPropagation();trackWhatsappClick('${escapeHTML(p.name)}','card');window.open('${WHATSAPP_LINK}')">
           <i class="ti ti-brand-whatsapp" style="font-size:14px"></i> Pedir pelo WhatsApp
         </button>
       </div>
@@ -629,7 +630,7 @@ function renderFeaturedSection(){
         <span class="feat-badge">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
         ${p.oldprice?`<span class="feat-badge" style="text-decoration:line-through;opacity:.5;border-color:transparent">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>`:""}
       </div>
-      <a href="${WHATSAPP_LINK}" class="btn-gold" style="width:fit-content">
+      <a href="${WHATSAPP_LINK}" class="btn-gold" style="width:fit-content" onclick="trackWhatsappClick('${escapeHTML(p.name)}','featured')">
         <i class="ti ti-brand-whatsapp" style="font-size:16px"></i>Consultar disponibilidade
       </a>
     </div>
