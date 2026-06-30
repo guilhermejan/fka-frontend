@@ -669,3 +669,72 @@ document.addEventListener("DOMContentLoaded", async () => {
   _lastWasMobile = isMobileView();
   await loadProductsFromAPI();
 });
+
+function getInitials(name) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function buildReviewCardHTML(r) {
+  const stars = "★".repeat(r.stars || 5) + "☆".repeat(5 - (r.stars || 5));
+  const initials = getInitials(r.name);
+  const proofBadge = r.proof_img
+    ? `<button class="review-proof-btn" onclick="openReviewProof('${escapeAttr(r.proof_img)}')" type="button">
+         <i class="ti ti-shield-check" style="font-size:12px"></i> Ver prova
+       </button>`
+    : "";
+
+  return `
+    <div class="review-card">
+      <div class="review-stars">${stars}</div>
+      <p class="review-text">"${escapeHTML(r.text)}"</p>
+      <div class="review-author">
+        <div class="avatar">${escapeHTML(initials)}</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#ddd">${escapeHTML(r.name)}</div>
+          <div style="font-size:11px;color:#555">${escapeHTML(r.location || "")}</div>
+        </div>
+        ${proofBadge}
+      </div>
+    </div>`;
+}
+
+async function loadReviewsSection() {
+  const grid = document.getElementById("reviews-grid");
+  if (!grid) return;
+  try {
+    const reviews = await getReviews();
+    const active = reviews.filter(r => r.active);
+    if (active.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#555;font-size:13px;padding:20px">Em breve, novas avaliações.</div>`;
+      return;
+    }
+    grid.innerHTML = active.map(buildReviewCardHTML).join("");
+  } catch (err) {
+    console.error("Erro ao carregar avaliações:", err);
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#555;font-size:13px;padding:20px">Não foi possível carregar as avaliações.</div>`;
+  }
+}
+
+function openReviewProof(url) {
+  const overlay = document.createElement("div");
+  overlay.className = "review-proof-overlay";
+  overlay.innerHTML = `
+    <div class="review-proof-modal">
+      <button class="review-proof-close" type="button">&times;</button>
+      <img src="${escapeAttr(url)}" alt="Print de avaliação">
+    </div>`;
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay || e.target.classList.contains("review-proof-close")) {
+      overlay.remove();
+    }
+  });
+  document.body.appendChild(overlay);
+}
+window.openReviewProof = openReviewProof;
+
+function escapeAttr(str) {
+  return String(str).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+}

@@ -90,6 +90,54 @@ async function updateSetting(key, value) {
   return await response.json();
 }
 
+async function getReviews() {
+  const response = await fetch(`${API_URL}/reviews`);
+  if (!response.ok) throw new Error("Falha ao buscar avaliações");
+  return await response.json();
+}
+
+async function createReview(review) {
+  const response = await fetch(`${API_URL}/reviews`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(review)
+  });
+  if (!response.ok) throw new Error("Falha ao criar avaliação");
+  return await response.json();
+}
+
+async function updateReview(id, review) {
+  const response = await fetch(`${API_URL}/reviews/${id}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(review)
+  });
+  if (!response.ok) throw new Error("Falha ao atualizar avaliação");
+  return await response.json();
+}
+
+async function deleteReview(id) {
+  const response = await fetch(`${API_URL}/reviews/${id}`, {
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+  });
+  if (!response.ok) throw new Error("Falha ao excluir avaliação");
+  return await response.json();
+}
+
+async function getReviews() {
+  const response = await fetch(`${API_URL}/reviews`);
+  if (!response.ok) throw new Error("Falha ao buscar avaliações");
+  return await response.json();
+}
+window.getReviews = getReviews;
+
+window.getReviews = getReviews;
+window.createReview = createReview;
+window.updateReview = updateReview;
+window.deleteReview = deleteReview;
+
+
 window.getProducts = getProducts;
 window.createProduct = createProduct;
 window.updateProduct = updateProduct;

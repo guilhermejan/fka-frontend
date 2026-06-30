@@ -8,8 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   loadProducts();
   loadHeroBgPreview();
+  loadReviews();
   document.getElementById("product-form")
     .addEventListener("submit", saveProduct);
+  document.getElementById("review-form")
+    .addEventListener("submit", saveReview);
 });
 
 function logout() {
@@ -394,3 +397,178 @@ async function loadHeroBgPreview() {
     } catch(e) {}
   }
 }
+
+// ── REVIEWS (Avaliações) ────────────────────────────────────
+
+let allReviews = [];
+let reviewProofImg = null; // { file, preview } ou string (URL existente) ou null
+
+async function loadReviews() {
+  const tbody = document.getElementById("reviews-table");
+  try {
+    allReviews = await getReviews();
+  } catch (error) {
+    console.error("Erro buscando avaliações:", error);
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-row">Erro ao carregar avaliações.</td></tr>`;
+    return;
+  }
+  renderReviewsTable();
+}
+window.loadReviews = loadReviews;
+
+function renderStars(n) {
+  const full = "★".repeat(n);
+  const empty = "☆".repeat(5 - n);
+  return full + empty;
+}
+
+function renderReviewsTable() {
+  const tbody = document.getElementById("reviews-table");
+  if (allReviews.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-row">Nenhuma avaliação cadastrada.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = allReviews.map(r => `
+    <tr>
+      <td class="prod-name">${escapeHtml(r.name)}</td>
+      <td>${escapeHtml(r.location || "-")}</td>
+      <td>${renderStars(r.stars)}</td>
+      <td>${r.proof_img ? `<span class="cat-badge">✓ Anexada</span>` : `<span style="color:var(--mute,#888)">-</span>`}</td>
+      <td><span class="status-dot ${r.active ? "active" : "inactive"}">${r.active ? "Ativo" : "Inativo"}</span></td>
+      <td class="actions-cell">
+        <button class="btn-edit" onclick="openReviewModal(${r.id})">Editar</button>
+        <button class="btn-delete" onclick="removeReview(${r.id})">🗑</button>
+      </td>
+    </tr>`).join("");
+}
+
+function openReviewModal(id) {
+  const overlay = document.getElementById("review-modal-overlay");
+  const form = document.getElementById("review-form");
+  form.reset();
+  reviewProofImg = null;
+
+  if (id) {
+    const review = allReviews.find(r => r.id === id);
+    if (!review) return;
+    document.getElementById("review-modal-title").textContent = "Editar Avaliação";
+    document.getElementById("review-id").value = review.id;
+    document.getElementById("review-name").value = review.name || "";
+    document.getElementById("review-location").value = review.location || "";
+    document.getElementById("review-text").value = review.text || "";
+    document.getElementById("review-stars").value = review.stars || 5;
+    document.getElementById("review-active").checked = !!review.active;
+    if (review.proof_img) reviewProofImg = review.proof_img;
+  } else {
+    document.getElementById("review-modal-title").textContent = "Nova Avaliação";
+    document.getElementById("review-id").value = "";
+    document.getElementById("review-stars").value = 5;
+    document.getElementById("review-active").checked = true;
+  }
+
+  overlay.classList.add("open");
+  renderReviewProofPreview();
+}
+window.openReviewModal = openReviewModal;
+
+function closeReviewModal() {
+  if (reviewProofImg && typeof reviewProofImg === "object" && reviewProofImg.preview) {
+    URL.revokeObjectURL(reviewProofImg.preview);
+  }
+  reviewProofImg = null;
+  document.getElementById("review-modal-overlay").classList.remove("open");
+}
+window.closeReviewModal = closeReviewModal;
+
+function onReviewProofSelected(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (reviewProofImg && typeof reviewProofImg === "object" && reviewProofImg.preview) {
+    URL.revokeObjectURL(reviewProofImg.preview);
+  }
+  reviewProofImg = { file, preview: URL.createObjectURL(file) };
+  renderReviewProofPreview();
+  input.value = "";
+}
+window.onReviewProofSelected = onReviewProofSelected;
+
+function removeReviewProof() {
+  if (reviewProofImg && typeof reviewProofImg === "object" && reviewProofImg.preview) {
+    URL.revokeObjectURL(reviewProofImg.preview);
+  }
+  reviewProofImg = null;
+  renderReviewProofPreview();
+}
+window.removeReviewProof = removeReviewProof;
+
+function renderReviewProofPreview() {
+  const box = document.getElementById("review-proof-preview");
+  if (!box) return;
+  if (!reviewProofImg) {
+    box.innerHTML = `<span class="empty-text">Nenhum print anexado</span>`;
+    return;
+  }
+  const src = typeof reviewProofImg === "string" ? reviewProofImg : reviewProofImg.preview;
+  box.innerHTML = `
+    <div class="img-preview-item">
+      <img src="${escapeHtml(src)}" alt="">
+      <button type="button" class="img-preview-remove" onclick="removeReviewProof()" title="Remover">&times;</button>
+    </div>`;
+}
+
+async function saveReview(e) {
+  e.preventDefault();
+  const submitBtn = e.target.querySelector("button[type=submit]");
+  submitBtn.textContent = "Salvando...";
+  submitBtn.disabled = true;
+
+  const id = document.getElementById("review-id").value;
+
+  try {
+    let proofUrl = null;
+    if (reviewProofImg) {
+      if (typeof reviewProofImg === "object" && reviewProofImg.file) {
+        proofUrl = await uploadImage(reviewProofImg.file);
+        if (reviewProofImg.preview) URL.revokeObjectURL(reviewProofImg.preview);
+      } else {
+        proofUrl = reviewProofImg;
+      }
+    }
+
+    const payload = {
+      name:      document.getElementById("review-name").value.trim(),
+      location:  document.getElementById("review-location").value.trim(),
+      text:      document.getElementById("review-text").value.trim(),
+      stars:     parseInt(document.getElementById("review-stars").value, 10) || 5,
+      proof_img: proofUrl,
+      active:    document.getElementById("review-active").checked
+    };
+
+    if (id) {
+      await updateReview(id, payload);
+    } else {
+      await createReview(payload);
+    }
+
+    closeReviewModal();
+    await loadReviews();
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao salvar avaliação: " + error.message);
+  } finally {
+    submitBtn.textContent = "Salvar";
+    submitBtn.disabled = false;
+  }
+}
+
+async function removeReview(id) {
+  if (!confirm("Excluir esta avaliação?")) return;
+  try {
+    await deleteReview(id);
+    await loadReviews();
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao excluir avaliação.");
+  }
+}
+window.removeReview = removeReview;
