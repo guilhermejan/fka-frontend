@@ -972,9 +972,11 @@
     min-width: 0 !important;
     max-width: unset !important;
     scroll-snap-align: unset !important;
+    overflow: visible !important;    /* ← deixa o conteúdo aparecer */
+    height: auto !important;         /* ← altura automática */ 
   }
 
-  .prod-card-img    { height: 420px; }
+  .prod-card-img    { height: 240px !important; }  /* ← ajusta esse valor */
   .carousel-dots    { display: none !important; }
   .scroll-hint      { display: none !important; }
   .carousel-arrow   { display: none !important; }
