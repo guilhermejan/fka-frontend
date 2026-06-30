@@ -1,4 +1,4 @@
-const API_URL = "https://fka-backend.onrender.com/api";
+const API_URL = "https://api.fkaimports.com.br/api";
 
 const CLOUDINARY_CLOUD_NAME = "dk98eyikn";
 
