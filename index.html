@@ -934,16 +934,26 @@ setTimeout(() => {
 })();
 
 /* 9 — Analytics — rastreamento de produtos clicados */
-function trackProductClick(productName, productId) {
+function trackProductView(productName, productId) {
   if (typeof gtag !== 'undefined') {
-    gtag('event', 'product_click', {
-      event_category: 'produtos',
-      event_label: productName,
-      value: productId
+    gtag('event', 'product_view', {
+      product_name: productName,
+      product_id: productId
     });
   }
 }
-window.trackProductClick = trackProductClick;
+window.trackProductView = trackProductView;
+
+function trackWhatsappClick(productName, source) {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'whatsapp_click', {
+      product_name: productName || '(não especificado)',
+      source: source
+    });
+  }
+}
+window.trackWhatsappClick = trackWhatsappClick;
+
 </script>
 
 <script src="js/api.js"></script>

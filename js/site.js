@@ -578,7 +578,7 @@ function renderCarousel(){
 function handleCardClick(e, id) {
   if (e.target.closest(".prod-wpp-btn")) return;
   const p = products.find(x => x.id === id);
-  if (p) trackProductClick(p.name, p.id);
+  if (p) trackProductView(p.name, p.id);
   openProdModal(id);
 }
 window.handleCardClick = handleCardClick;
