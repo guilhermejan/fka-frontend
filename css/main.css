@@ -974,7 +974,7 @@
     scroll-snap-align: unset !important;
   }
 
-  .prod-card-img    { height: 320px; }
+  .prod-card-img    { height: 420px; }
   .carousel-dots    { display: none !important; }
   .scroll-hint      { display: none !important; }
   .carousel-arrow   { display: none !important; }
@@ -983,7 +983,7 @@
 @media (max-width: 640px) {
   .carousel-arrow { display: none !important; }
   .prod-card { flex: 0 0 62vw; max-width: 230px; }
-  .prod-card-img { height: 420px; }
+  .prod-card-img { height: 130px; }
   .prod-card-body { padding: 10px; }
   .prod-card-name { font-size: 12px; }
   .prod-price { font-size: 13px; }
