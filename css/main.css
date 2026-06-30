@@ -941,10 +941,15 @@
     padding-right: 24px;
   }
 
+  .carousel-header {
+    max-width: 100% !important;
+  }
+
   .carousel-outer {
     overflow: visible !important;
     padding: 4px 0 16px;
     width: 100%;
+    max-width: 100% !important;
   }
 
   .carousel-track {
@@ -952,6 +957,7 @@
     grid-template-columns: repeat(6, 1fr) !important;
     gap: 16px;
     width: 100%;
+    max-width: 100% !important;
     overflow: visible !important;
     cursor: default;
     padding: 4px 0;
@@ -983,4 +989,3 @@
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
-
