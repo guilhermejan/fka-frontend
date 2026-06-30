@@ -937,8 +937,8 @@
    ============================================================ */
 @media (min-width: 641px) {
   .carousel-section {
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .carousel-outer {
@@ -950,7 +950,7 @@
   .carousel-track {
     display: grid !important;
     grid-template-columns: repeat(6, 1fr) !important;
-    gap: 20px;
+    gap: 16px;
     width: 100%;
     overflow: visible !important;
     cursor: default;
@@ -968,7 +968,7 @@
     scroll-snap-align: unset !important;
   }
 
-  .prod-card-img    { height: 280px; }
+  .prod-card-img    { height: 320px; }
   .carousel-dots    { display: none !important; }
   .scroll-hint      { display: none !important; }
   .carousel-arrow   { display: none !important; }
