@@ -891,6 +891,59 @@ function toggleFaq(btn) {
   document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
   if (!isOpen) item.classList.add('open');
 }
+
+function animateCounters() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    el.classList.add('counting');
+    el.addEventListener('animationend', () => el.classList.remove('counting'), { once: true });
+  });
+}
+
+const introEl = document.getElementById('fka-intro');
+const introWaitTime = introEl ? 2900 : 0;
+
+setTimeout(() => {
+  const statsObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounters();
+        statsObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  const statsEl = document.querySelector('.hero-stats');
+  if (statsEl) statsObserver.observe(statsEl);
+}, introWaitTime);
+
+/* 14 — partículas douradas no CTA */
+(function spawnParticles() {
+  const cta = document.querySelector('.cta-section');
+  if (!cta) return;
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'cta-particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      bottom: ${Math.random() * 40}%;
+      --dur: ${3 + Math.random() * 4}s;
+      --delay: ${Math.random() * 4}s;
+      --dx: ${(Math.random() - .5) * 60}px;
+    `;
+    cta.appendChild(p);
+  }
+})();
+
+/* 9 — Analytics — rastreamento de produtos clicados */
+function trackProductClick(productName, productId) {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'product_click', {
+      event_category: 'produtos',
+      event_label: productName,
+      value: productId
+    });
+  }
+}
+window.trackProductClick = trackProductClick;
 </script>
 
 <script src="js/api.js"></script>
