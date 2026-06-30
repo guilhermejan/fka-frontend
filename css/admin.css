@@ -511,7 +511,8 @@ tbody tr:last-child td {
   background: var(--bg-panel);
 }
 
-#product-form label {
+#product-form label,
+#review-form label {
   display: block;
   font-size: 12px;
   font-weight: 500;
@@ -520,7 +521,11 @@ tbody tr:last-child td {
 }
 
 #product-form input,
-#product-form textarea {
+#product-form textarea,
+#product-form select,
+#review-form input,
+#review-form textarea,
+#review-form select {
   display: block;
   width: 100%;
   margin-top: 6px;
@@ -539,7 +544,11 @@ tbody tr:last-child td {
 }
 
 #product-form input:focus,
-#product-form textarea:focus {
+#product-form textarea:focus,
+#product-form select:focus,
+#review-form input:focus,
+#review-form textarea:focus,
+#review-form select:focus {
   outline: none;
   border-color: var(--gold);
   box-shadow: 0 0 0 3px var(--gold-dim);
