@@ -983,7 +983,7 @@
 @media (max-width: 640px) {
   .carousel-arrow { display: none !important; }
   .prod-card { flex: 0 0 62vw; max-width: 230px; }
-  .prod-card-img { height: 130px; }
+  .prod-card-img { height: 630px; }
   .prod-card-body { padding: 10px; }
   .prod-card-name { font-size: 12px; }
   .prod-price { font-size: 13px; }
