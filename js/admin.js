@@ -1,24 +1,29 @@
 let allProducts = [];
 let imgUrls = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (!localStorage.getItem("token")) {
-    window.location.href = "./acesso.html";
-    return;
-  }
-  loadProducts();
-  loadHeroBgPreview();
-  loadReviews();
+document.addEventListener("DOMContentLoaded", async () => {
+    const check = await fetch(`${API_URL}/auth/me`, { credentials: "include" }).catch(() => null);
+    if (!check || !check.ok) {
+        window.location.href = "./acesso.html";
+        return;
+    }
+    loadProducts();
+    loadHeroBgPreview();
+    loadReviews();
   document.getElementById("product-form")
     .addEventListener("submit", saveProduct);
   document.getElementById("review-form")
     .addEventListener("submit", saveReview);
 });
 
-function logout() {
-  localStorage.removeItem("token");
-  window.location.href = "./acesso.html";
+async function logout() {
+    await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include"
+    });
+    window.location.href = "./acesso.html";
 }
+
 window.logout = logout;
 
 async function loadProducts() {
@@ -406,7 +411,7 @@ let reviewProofImg = null; // { file, preview } ou string (URL existente) ou nul
 async function loadReviews() {
   const tbody = document.getElementById("reviews-table");
   try {
-    allReviews = await getReviews();
+    allReviews = await getReviewsAdmin()
   } catch (error) {
     console.error("Erro buscando avaliações:", error);
     tbody.innerHTML = `<tr><td colspan="6" class="empty-row">Erro ao carregar avaliações.</td></tr>`;

@@ -99,38 +99,46 @@
 
 <script src="./js/api.js"></script>
 <script>
-  document.getElementById("login-form").addEventListener("submit", async (e) => {
+document.getElementById("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const btn = e.target.querySelector("button[type=submit]");
+    const errorBox = document.getElementById("login-error");
+
+    btn.disabled = true;
+    btn.textContent = "Entrando...";
+    errorBox.classList.remove("show");
 
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
-    const errorBox = document.getElementById("login-error");
-    errorBox.classList.remove("show");
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ username, password })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok || !data.token) {
-        errorBox.textContent = data.error || "Usuário ou senha inválidos.";
-        errorBox.classList.add("show");
-        return;
-      }
+        if (!response.ok || !data.ok) {
+            errorBox.textContent = data.error || "Usuário ou senha inválidos.";
+            errorBox.classList.add("show");
+            return;
+        }
 
-      localStorage.setItem("token", data.token);
-      window.location.href = "./fecca.html";
+        window.location.href = "./fecca.html";
 
     } catch (error) {
-      console.error(error);
-      errorBox.textContent = "Erro de conexão com o servidor.";
-      errorBox.classList.add("show");
+        console.error(error);
+        errorBox.textContent = "Erro de conexão com o servidor.";
+        errorBox.classList.add("show");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Entrar";
     }
-  });
+});
 </script>
 </body>
 </html>
