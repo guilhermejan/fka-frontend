@@ -209,6 +209,34 @@
     </div>
   </section>
 
+      <section class="reviews-section">
+    <div class="section-header">
+      <div>
+        <h2>Avaliações de Clientes</h2>
+        <p>Gerencie os depoimentos exibidos na seção de avaliações do site</p>
+      </div>
+      <button class="btn-primary" onclick="openReviewModal()">+ Nova Avaliação</button>
+    </div>
+
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Cidade</th>
+            <th>Nota</th>
+            <th>Prova</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="reviews-table">
+          <tr><td colspan="6" class="empty-row">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
 </main>
 
 <!-- MODAL PRODUTO -->
@@ -284,6 +312,57 @@
     <div id="featured-options" class="featured-options">
       <p class="empty-row">Carregando produtos...</p>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="review-modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="review-modal-title">Nova Avaliação</h3>
+      <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+    </div>
+    <form id="review-form">
+      <input type="hidden" id="review-id">
+
+      <label>Nome do cliente
+        <input type="text" id="review-name" required>
+      </label>
+
+      <label>Cidade / Estado
+        <input type="text" id="review-location" placeholder="Ex: São Paulo, SP">
+      </label>
+
+      <label>Depoimento
+        <textarea id="review-text" rows="3" required></textarea>
+      </label>
+
+      <label>Nota
+        <select id="review-stars">
+          <option value="5">★★★★★ (5)</option>
+          <option value="4">★★★★☆ (4)</option>
+          <option value="3">★★★☆☆ (3)</option>
+          <option value="2">★★☆☆☆ (2)</option>
+          <option value="1">★☆☆☆☆ (1)</option>
+        </select>
+      </label>
+
+      <div class="img-upload-section">
+        <span class="img-upload-label">Print de prova (opcional)</span>
+        <div id="review-proof-preview"></div>
+        <input type="file" id="review-proof-file" accept="image/*" style="display:none" onchange="onReviewProofSelected(this)">
+        <button type="button" class="btn-outline" onclick="document.getElementById('review-proof-file').click()" style="margin-top:8px">📁 Anexar print</button>
+      </div>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="review-active" checked>
+        Avaliação ativa
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-outline" onclick="closeReviewModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </div>
+    </form>
   </div>
 </div>
 
