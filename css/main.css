@@ -991,3 +991,113 @@
   .prod-price { font-size: 13px; }
   .prod-wpp-btn { font-size: 10px; padding: 7px; }
 }
+
+/* ============================================================
+   13 — REVIEWS — borda dourada animada
+   ============================================================ */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(201,168,76,.08); box-shadow: none; }
+  50%       { border-color: rgba(201,168,76,.45); box-shadow: 0 0 18px rgba(201,168,76,.12); }
+}
+
+.review-card {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+.review-card:nth-child(2) { animation-delay: 1s; }
+.review-card:nth-child(3) { animation-delay: 2s; }
+.review-card:hover {
+  animation: none;
+  border-color: rgba(201,168,76,.55) !important;
+  box-shadow: 0 0 28px rgba(201,168,76,.18) !important;
+  transform: translateY(-3px);
+}
+
+/* ============================================================
+   11 — FEATURED — glow pulsante atrás da imagem
+   ============================================================ */
+.featured-inner {
+  position: relative;
+}
+
+.featured-inner::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(201,168,76,.18) 0%, transparent 70%);
+  pointer-events: none;
+  animation: featGlow 3s ease-in-out infinite;
+  z-index: 0;
+}
+
+.feat-prod-img,
+.feat-prod-placeholder {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes featGlow {
+  0%, 100% { opacity: .6; transform: translateY(-50%) scale(1); }
+  50%       { opacity: 1;  transform: translateY(-50%) scale(1.12); }
+}
+
+/* ============================================================
+   12 — BENEFITS — animação de entrada refinada
+   ============================================================ */
+.fka-stagger.visible > .benefit-card {
+  animation: benefitIn .55s cubic-bezier(.22,1,.36,1) both;
+}
+.fka-stagger.visible > .benefit-card:nth-child(1) { animation-delay: .05s; }
+.fka-stagger.visible > .benefit-card:nth-child(2) { animation-delay: .15s; }
+.fka-stagger.visible > .benefit-card:nth-child(3) { animation-delay: .25s; }
+.fka-stagger.visible > .benefit-card:nth-child(4) { animation-delay: .35s; }
+
+@keyframes benefitIn {
+  from { opacity: 0; transform: translateY(32px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================
+   15 — HERO STATS — counter pop
+   ============================================================ */
+.stat-num {
+  display: inline-block;
+}
+.stat-num.counting {
+  animation: statPop .4s cubic-bezier(.22,1,.36,1);
+}
+@keyframes statPop {
+  0%   { transform: scale(.8); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================================
+   14 — CTA — partículas douradas
+   ============================================================ */
+.cta-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  pointer-events: none;
+  opacity: 0;
+  animation: particleFly var(--dur, 4s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes particleFly {
+  0%   { transform: translateY(0) translateX(0) scale(0); opacity: 0; }
+  10%  { opacity: .7; }
+  90%  { opacity: .3; }
+  100% { transform: translateY(-120px) translateX(var(--dx, 20px)) scale(1.5); opacity: 0; }
+}
