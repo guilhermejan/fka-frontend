@@ -26,7 +26,7 @@ async function uploadImage(file) {
 
     if (!response.ok) {
         const errBody = await response.json().catch(() => ({}));
-        console.error("Cloudinary error:", errBody);
+        console.error("Cloudinary error:", JSON.stringify(errBody, null, 2));
         throw new Error("Falha ao fazer upload da imagem");
     }
     const data = await response.json();
