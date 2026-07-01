@@ -1,4 +1,5 @@
 const API_URL = "https://api.fkaimports.com.br/api";
+window.API_URL = API_URL;
 
 const CLOUDINARY_CLOUD_NAME = "dk98eyikn";
 
@@ -9,7 +10,7 @@ async function uploadImage(file) {
     });
 
     if (!signRes.ok) throw new Error("Falha ao obter assinatura de upload");
-    const { timestamp, signature, api_key, cloud_name } = await signRes.json();
+    const { timestamp, signature, api_key } = await signRes.json(); // cloud_name removido daqui
 
     const formData = new FormData();
     formData.append("file", file);
@@ -19,15 +20,20 @@ async function uploadImage(file) {
     formData.append("folder", "fka");
 
     const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
         { method: "POST", body: formData }
     );
 
-    if (!response.ok) throw new Error("Falha ao fazer upload da imagem");
+    if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        console.error("Cloudinary error:", errBody);
+        throw new Error("Falha ao fazer upload da imagem");
+    }
     const data = await response.json();
     return data.secure_url;
 }
 window.uploadImage = uploadImage;
+
 
 async function getProducts() {
     const response = await fetch(`${API_URL}/products`);
