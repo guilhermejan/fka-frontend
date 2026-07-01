@@ -1235,3 +1235,97 @@
   align-items: center;
   gap: 10px;
 }
+
+.reviews-section {
+  padding: 70px 24px;
+}
+
+/* Grid de 3 colunas no desktop */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 36px auto 0;
+}
+
+/* Card base */
+.review-card {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(201, 168, 76, 0.08);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* mantém hover e borderGlow declarados acima */
+}
+
+/* Estrelas */
+.review-stars {
+  color: #e8c96b;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+/* Texto do depoimento */
+.review-text {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.75;
+  flex: 1;     /* empurra o autor para o fundo do card */
+  margin: 0;
+}
+
+/* Avatar com iniciais */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  color: #c9a84c;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+
+/* Tablet */
+@media (max-width: 960px) {
+  .reviews-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .reviews-section {
+    padding: 50px 16px;
+  }
+  .reviews-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 24px;
+  }
+  .review-card {
+    padding: 18px;
+  }
+}
+
+/* Fallback: todos os filhos ficam visíveis quando a seção entra na tela */
+.fka-stagger.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.55s;   /* itens 6+ aparecem juntos após o stagger */
+}
+
+/* Os 5 primeiros têm delays escalonados (maior especificidade = ganham) */
+.fka-stagger.visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
+.fka-stagger.visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+.fka-stagger.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+.fka-stagger.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+.fka-stagger.visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
