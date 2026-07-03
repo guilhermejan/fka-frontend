@@ -702,22 +702,68 @@ function buildReviewCardHTML(r) {
     </div>`;
 }
 
+const REVIEWS_PER_PAGE = 3;
+let _reviewsAll = [];
+let _reviewsShown = 0;
+
+function renderReviewsGrid() {
+  const grid = document.getElementById("reviews-grid");
+  if (!grid) return;
+
+  const slice = _reviewsAll.slice(0, _reviewsShown);
+  const hasMore = _reviewsShown < _reviewsAll.length;
+
+  grid.innerHTML = slice.map(buildReviewCardHTML).join("") + `
+    <div id="reviews-load-more-wrap" style="grid-column:1/-1;text-align:center;margin-top:8px">
+      ${hasMore ? `
+        <button id="btn-load-more-reviews" onclick="loadMoreReviews()" style="
+          background: rgba(201,168,76,.08);
+          border: 1px solid rgba(201,168,76,.25);
+          color: var(--gold-light);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-weight: 700;
+          font-size: 13px;
+          padding: 11px 28px;
+          border-radius: 8px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: background .2s;
+        " onmouseover="this.style.background='rgba(201,168,76,.16)'"
+           onmouseout="this.style.background='rgba(201,168,76,.08)'">
+          <i class="ti ti-chevron-down" style="font-size:15px"></i>
+          Ver mais avaliações (${_reviewsAll.length - _reviewsShown} restantes)
+        </button>` : ""}
+    </div>`;
+}
+
+function loadMoreReviews() {
+  _reviewsShown = Math.min(_reviewsShown + REVIEWS_PER_PAGE, _reviewsAll.length);
+  renderReviewsGrid();
+}
+window.loadMoreReviews = loadMoreReviews;
+
 async function loadReviewsSection() {
   const grid = document.getElementById("reviews-grid");
   if (!grid) return;
   try {
     const reviews = await getReviews();
-    const active = reviews.filter(r => r.active);
-    if (active.length === 0) {
+    _reviewsAll = reviews.filter(r => r.active);
+
+    if (_reviewsAll.length === 0) {
       grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#555;font-size:13px;padding:20px">Em breve, novas avaliações.</div>`;
       return;
     }
-    grid.innerHTML = active.map(buildReviewCardHTML).join("");
+
+    _reviewsShown = Math.min(REVIEWS_PER_PAGE, _reviewsAll.length);
+    renderReviewsGrid();
   } catch (err) {
     console.error("Erro ao carregar avaliações:", err);
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#555;font-size:13px;padding:20px">Não foi possível carregar as avaliações.</div>`;
   }
 }
+
 
 function openReviewProof(url) {
   const overlay = document.createElement("div");
