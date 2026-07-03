@@ -733,7 +733,7 @@ function renderReviewsGrid() {
         " onmouseover="this.style.background='rgba(201,168,76,.16)'"
            onmouseout="this.style.background='rgba(201,168,76,.08)'">
           <i class="ti ti-chevron-down" style="font-size:15px"></i>
-          Ver mais avaliações (${_reviewsAll.length - _reviewsShown} restantes)
+          Ver mais avaliações
         </button>` : ""}
     </div>`;
 }
