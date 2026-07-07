@@ -2,6 +2,13 @@ let products = [];
 let nextId = 1;
 
 const WHATSAPP_LINK = "https://chat.whatsapp.com/K8SMsIxFJke6NoRX9vRbJD";
+const WHATSAPP_PRIVATE = "https://wa.me/5511956683435";
+
+function buildPrivateWppLink(name, price) {
+  const priceStr = Number(price).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+  const msg = `Olá! Tenho interesse no produto: ${name} - R$ ${priceStr}`;
+  return `${WHATSAPP_PRIVATE}?text=${encodeURIComponent(msg)}`;
+}
 const MOBILE_BREAKPOINT = 640;
 
 function isMobileView() {
@@ -140,7 +147,7 @@ function openProdModal(id) {
         <span class="prod-modal-price">R$ ${Number(p.price).toLocaleString("pt-BR", {minimumFractionDigits:2})}</span>
         ${p.oldprice ? `<span class="prod-modal-oldprice">R$ ${Number(p.oldprice).toLocaleString("pt-BR", {minimumFractionDigits:2})}</span>` : ""}
       </div>
-      <a href="${WHATSAPP_LINK}" class="prod-modal-wpp" target="_blank" onclick="trackWhatsappClick('${escapeHTML(p.name)}','modal')">
+      <a href="${buildPrivateWppLink(p.name, p.price)}" class="prod-modal-wpp" target="_blank" onclick="trackWhatsappClick('${escapeHTML(p.name)}','modal')">
         <i class="ti ti-brand-whatsapp" style="font-size:18px"></i>
         Quero este produto
       </a>
@@ -202,9 +209,9 @@ function buildCardHTML(p, opts) {
           <span class="prod-price">R$ ${Number(p.price).toLocaleString("pt-BR")}</span>
           ${p.oldprice ? `<span class="prod-oldprice">R$ ${Number(p.oldprice).toLocaleString("pt-BR")}</span>` : ""}
         </div>
-        <button class="prod-wpp-btn" onclick="event.stopPropagation();trackWhatsappClick('${escapeHTML(p.name)}','card');window.open('${WHATSAPP_LINK}')">
+        <a class="prod-wpp-btn" href="${buildPrivateWppLink(p.name, p.price)}" target="_blank" onclick="event.stopPropagation();trackWhatsappClick('${escapeHTML(p.name)}','card')">
           <i class="ti ti-brand-whatsapp" style="font-size:14px"></i> Pedir pelo WhatsApp
-        </button>
+        </a>
       </div>
     </div>`;
 }
